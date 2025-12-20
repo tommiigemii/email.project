@@ -32,4 +32,4 @@ jobs:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
         run: |
-          python email.addresser.py
+          python email.addresser/email.addresser.py
