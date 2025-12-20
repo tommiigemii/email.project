@@ -4,7 +4,7 @@ on:
   schedule:
     # GitHub Actions usa CRON in UTC.
     # Esempio: 07:00 UTC = 08:00 a Roma (in inverno), 09:00 (in estate).
-    - cron: "0 7 * * *"
+    - cron: "*/0.5 * * *"
   workflow_dispatch: {}  # permette avvio manuale da GitHub (utile per test)
 
 jobs:
