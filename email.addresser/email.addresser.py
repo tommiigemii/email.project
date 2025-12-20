@@ -2,12 +2,6 @@ import os
 import smtplib
 from email.message import EmailMessage
 
-from dotenv import load_dotenv
-
-# Carica le variabili dal file .env nella cartella del progetto
-load_dotenv()
-
-
 def main():
     # 1) Leggiamo host e porta SMTP dalle variabili d'ambiente (con default sensati)
     smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
