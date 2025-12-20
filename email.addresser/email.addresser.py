@@ -4,8 +4,11 @@ from email.message import EmailMessage
 
 def main():
     # 1) Leggiamo host e porta SMTP dalle variabili d'ambiente (con default sensati)
+    
     smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_port_raw = os.getenv("SMTP_PORT")
+    smtp_port = int(smtp_port_raw) if smtp_port_raw else 587
+
 
     # 2) Leggiamo credenziali e destinatario (se mancano -> errore subito, così te ne accorgi)
     user = os.environ["EMAIL_USER"]
