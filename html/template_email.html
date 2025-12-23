@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Email</title>
+  </head>
+
+  <body
+    bgcolor="#07060b"
+    style="margin:0; padding:0; background-color:#07060b; font-family:Arial, sans-serif;"
+  >
+
+    <!-- WRAPPER -->
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      role="presentation"
+      bgcolor="#07060b"
+      style="
+        background-color:#07060b;
+        padding:28px 0;
+        background-image:
+          radial-gradient(circle at 20% 10%, rgba(255, 0, 92, 0.18) 0%, rgba(7,6,11,0) 45%),
+          radial-gradient(circle at 80% 20%, rgba(159, 0, 255, 0.20) 0%, rgba(7,6,11,0) 50%),
+          radial-gradient(circle at 50% 120%, rgba(255, 76, 0, 0.14) 0%, rgba(7,6,11,0) 55%);
+        background-repeat:no-repeat;
+      "
+    >
+      <tr>
+        <td align="center" bgcolor="#07060b" style="background-color:#07060b;">
+
+          <!-- CARD -->
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            role="presentation"
+            bgcolor="#0e0d14"
+            style="
+              width:600px;
+              max-width:600px;
+              background-color:#0e0d14;
+              color:#ffffff;
+              border-radius:20px;
+              overflow:hidden;
+              border:1px solid rgba(255,255,255,0.10);
+              box-shadow:0 18px 50px rgba(0,0,0,0.55);
+              background-image:linear-gradient(
+                180deg,
+                rgba(255, 0, 92, 0.06) 0%,
+                rgba(159, 0, 255, 0.05) 30%,
+                rgba(14,13,20,1) 70%
+              );
+            "
+          >
+
+            <!-- TOP GLOW -->
+            <tr>
+              <td
+                height="6"
+                bgcolor="#ff005c"
+                style="
+                  height:6px;
+                  line-height:6px;
+                  font-size:0;
+                  background-color:#ff005c;
+                  background-image:linear-gradient(
+                    90deg,
+                    #ff005c 0%,
+                    #b800ff 55%,
+                    #ff4b2b 100%
+                  );
+                "
+              >&nbsp;</td>
+            </tr>
+
+            <!-- HEADER -->
+            <tr>
+              <td style="padding:26px 24px 10px; text-align:center;">
+
+                <div
+                  style="
+                    display:inline-block;
+                    padding:7px 12px;
+                    border-radius:999px;
+                    font-size:12px;
+                    letter-spacing:0.7px;
+                    text-transform:uppercase;
+                    color:rgba(255,255,255,0.85);
+                    background-color:#141221;
+                    background-image:linear-gradient(
+                      135deg,
+                      rgba(181,44,94,0.22) 0%,
+                      rgba(140,34,182,0.18) 55%,
+                      rgba(189,81,62,0.14) 100%
+                    );
+                    border:1px solid rgba(255,255,255,0.12);
+                  "
+                >
+                  DAILY DROP
+                </div>
+
+                <h1
+                  style="
+                    margin:16px 0 0;
+                    font-size:30px;
+                    line-height:1.12;
+                    letter-spacing:0.2px;
+                  "
+                >
+                  BUONGIORNO {{NAME}}
+                </h1>
+
+                <div
+                  style="
+                    margin-top:10px;
+                    font-size:13px;
+                    color:rgba(255,255,255,0.72);
+                  "
+                >
+                  Un messaggio veloce da parte di
+                  <b style="color:#ffffff;">{{ADMIN}}</b>
+                </div>
+
+              </td>
+            </tr>
+
+            <!-- DIVIDER -->
+            <tr>
+              <td style="padding:0 24px;">
+                <div style="height:1px; background-color:rgba(255,255,255,0.08);"></div>
+              </td>
+            </tr>
+
+            <!-- FRASE -->
+            <tr>
+              <td style="padding:18px 26px 16px; text-align:center;">
+                <div
+                  style="
+                    font-size:16px;
+                    line-height:1.6;
+                    color:rgba(255,255,255,0.93);
+                    padding:16px;
+                    border-radius:16px;
+                    background-color:#12111a;
+                    background-image:linear-gradient(
+                      135deg,
+                      rgba(255,0,92,0.10) 0%,
+                      rgba(184,0,255,0.08) 55%,
+                      rgba(255,75,43,0.06) 100%
+                    );
+                    border:1px solid rgba(255,255,255,0.10);
+                  "
+                >
+                  {{FRASE_MATTINO}}
+                </div>
+              </td>
+            </tr>
+
+            <!-- IMAGE -->
+            <tr>
+              <td align="center" style="padding:6px 26px 20px;">
+                <a href="{{LINK_3D}}" target="_blank" style="text-decoration:none;">
+                  <img
+                    src="{{IMG_PREVIEW}}"
+                    alt="Apri il modello 3D"
+                    width="100%"
+                    style="
+                      max-width:548px;
+                      display:block;
+                      border-radius:18px;
+                      border:1px solid rgba(255,255,255,0.12);
+                      box-shadow:
+                        0 18px 48px rgba(0,0,0,0.60),
+                        0 0 28px rgba(255,0,92,0.20),
+                        0 0 34px rgba(184,0,255,0.16);
+                    "
+                  >
+                </a>
+              </td>
+            </tr>
+
+            <!-- CTA -->
+            <tr>
+              <td align="center" style="padding:0 26px 18px;">
+                <a
+                  href="{{LINK_3D}}"
+                  target="_blank"
+                  style="
+                    display:inline-block;
+                    padding:13px 20px;
+                    border-radius:16px;
+                    font-size:14px;
+                    font-weight:bold;
+                    color:#0b0b0f;
+                    text-decoration:none;
+                    background-color:#ff005c;
+                    background-image:linear-gradient(
+                      90deg,
+                      #ff005c 0%,
+                      #b800ff 55%,
+                      #ff4b2b 100%
+                    );
+                    box-shadow:
+                      0 12px 26px rgba(0,0,0,0.55),
+                      0 0 22px rgba(255,0,92,0.28);
+                  "
+                >
+                  Apri modello 3D
+                </a>
+              </td>
+            </tr>
+
+            <!-- FOOTER -->
+            <tr>
+              <td
+                bgcolor="#0b0a10"
+                style="
+                  padding:16px 18px;
+                  text-align:center;
+                  font-size:12px;
+                  color:rgba(166,166,179,0.95);
+                  border-top:1px solid rgba(255,255,255,0.08);
+                  background-color:#0b0a10;
+                "
+              >
+                Tocca l’immagine per visualizzare il modello 3D interattivo
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>
