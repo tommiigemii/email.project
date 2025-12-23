@@ -2,34 +2,58 @@ name: Daily Email
 
 on:
   schedule:
-    # GitHub Actions usa CRON in UTC.
-    # Esempio: 07:00 UTC = 08:00 a Roma (in inverno), 09:00 (in estate).
+    # CRON in UTC. Esempio: 07:00 UTC = 08:00 Roma in inverno, 09:00 in estate.
     - cron: "* * * * *"
-  workflow_dispatch: {}  # permette avvio manuale da GitHub (utile per test)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-email
+  cancel-in-progress: true
 
 jobs:
   send:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Install dependencies (if any)
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Send email
+      - name: Send email (required secrets)
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-        run: |
-          python email.addresser/email.addresser.py
+          EMAIL_TO:   ${{ secrets.EMAIL_TO }}
+          # Opzionale: quante email inviare (default 10 nel tuo script)
+          EMAIL_COUNT: "10"
+          # Opzionale: debug SMTP (0/1)
+          SMTP_DEBUG: "0"
+        run: python email.addresser/email.addresser.py
+
+      # Se vuoi usare host/porta custom SOLO quando li hai davvero nei secrets,
+      # aggiungi questo secondo step e RIMUOVI lo step sopra.
+      #
+      # - name: Send email (with optional SMTP override)
+      #   env:
+      #     EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      #     EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      #     EMAIL_TO:   ${{ secrets.EMAIL_TO }}
+      #     SMTP_HOST:  ${{ secrets.SMTP_HOST }}
+      #     SMTP_PORT:  ${{ secrets.SMTP_PORT }}
+      #     EMAIL_COUNT: "10"
+      #     SMTP_DEBUG: "0"
+      #   run: python email.addresser/email.addresser.py
