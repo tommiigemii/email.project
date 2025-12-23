@@ -2,7 +2,7 @@ name: Daily Email
 
 on:
   schedule:
-    - cron: "* * * * *"   # UTC
+    - cron: "* * * * *"   # 08:00 CET (inverno). In estate cambia.
   workflow_dispatch:
 
 permissions:
@@ -27,24 +27,45 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install dependencies (if any)
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Load EMAIL_DATA into env
+      - name: Load EMAIL_DATA into env (optional)
+        if: ${{ secrets.EMAIL_DATA != '' }}
         run: |
-          # EMAIL_DATA deve contenere righe tipo KEY=VALUE
           printf "%s\n" "${{ secrets.EMAIL_DATA }}" >> "$GITHUB_ENV"
+
+      # ✅ Se preferisci secrets singoli, aggiungi questo step (invece di EMAIL_DATA)
+      # - name: Export secrets to env
+      #   run: |
+      #     echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> "$GITHUB_ENV"
+      #     echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> "$GITHUB_ENV"
+      #     echo "EMAIL_SUBJECT=${{ secrets.EMAIL_SUBJECT }}" >> "$GITHUB_ENV"
+      #     echo "EMAIL_RECIPIENTS=${{ secrets.EMAIL_RECIPIENTS }}" >> "$GITHUB_ENV"
+      #     echo "LINK_3D=${{ secrets.LINK_3D }}" >> "$GITHUB_ENV"
+      #     echo "IMG_PREVIEW=${{ secrets.IMG_PREVIEW }}" >> "$GITHUB_ENV"
 
       - name: Sanity check (no values printed)
         run: |
           python - <<'PY'
           import os
-          keys = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_TO"]
-          missing = [k for k in keys if not os.getenv(k)]
+
+          required = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D", "IMG_PREVIEW"]
+          missing = [k for k in required if not os.getenv(k)]
+
+          # accetta EMAIL_RECIPIENT o EMAIL_RECIPIENTS
+          if not (os.getenv("EMAIL_RECIPIENT") or os.getenv("EMAIL_RECIPIENTS")):
+            missing.append("EMAIL_RECIPIENTS (or EMAIL_RECIPIENT)")
+
+          # template: file o html inline
+          if not (os.getenv("EMAIL_BODY_FILE") or os.getenv("EMAIL_BODY")):
+            missing.append("EMAIL_BODY_FILE (or EMAIL_BODY)")
+
           if missing:
               raise SystemExit(f"Missing env vars: {missing}")
+
           print("OK: required env vars are set.")
           PY
 
