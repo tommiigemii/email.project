@@ -3,100 +3,598 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modello 3D</title>
+  <title>Daily Drop • Modello 3D</title>
 
   <!-- model-viewer (ufficiale) -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
+    :root{
+      --bg:#000000;
+      --panel:#0a0a0a;
+      --panel2:#0f0f0f;
+      --txt:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --line:rgba(255,255,255,.10);
+      --red:#ff1a1a;
+      --red2:#ff3b3b;
+      --shadow: 0 18px 60px rgba(0,0,0,.72);
+      --radius:18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
       font-family: Arial, sans-serif;
-      background:#0f0f10;
+      background: var(--bg);
       color:#fff;
-      height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* background glow (solo CSS, non invasivo) */
+    .bg{
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 80% 10%, rgba(255,26,26,.22), rgba(0,0,0,0) 45%),
+        radial-gradient(circle at 20% 70%, rgba(255,26,26,.10), rgba(0,0,0,0) 55%);
+      filter: blur(0px);
+      opacity:.85;
+    }
+
+    /* layout */
+    .page{
+      min-height:100vh;
       display:flex;
       flex-direction:column;
     }
 
     header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+
+    .header-inner{
+      max-width:1200px;
+      margin:0 auto;
       padding:14px 16px;
-      text-align:center;
-      border-bottom:1px solid rgba(255,255,255,0.08);
-    }
-
-    header h1{
-      margin:0;
-      font-size:18px;
-      letter-spacing:0.3px;
-    }
-
-    header p{
-      margin:6px 0 0;
-      font-size:13px;
-      color:rgba(255,255,255,0.75);
-    }
-
-    .wrap{
-      flex:1;
-      min-height:0;
       display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      background: rgba(255,26,26,.10);
+      border:1px solid rgba(255,26,26,.35);
+      color: rgba(255,255,255,.92);
+      font-size:12px;
+      letter-spacing:.7px;
+      text-transform:uppercase;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--red);
+      box-shadow: 0 0 18px rgba(255,26,26,.65);
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      line-height:1.1;
+    }
+    .title h1{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .title p{
+      margin:0;
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    .main{
+      max-width:1200px;
+      margin:0 auto;
+      width:100%;
+      padding:18px 16px 26px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+      align-items:start;
+    }
+
+    /* left content */
+    .card{
+      background: linear-gradient(180deg, rgba(255,26,26,.08), rgba(0,0,0,0) 55%), var(--panel);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-topbar{
+      height:6px;
+      background: var(--red);
+    }
+
+    .card-body{
+      padding:16px;
+    }
+
+    .hero{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .hero h2{
+      margin:0;
+      font-size:26px;
+      letter-spacing:.2px;
+    }
+
+    .hero .quote{
+      margin:0;
+      padding:14px;
+      border-radius:16px;
+      background: var(--panel2);
+      border:1px solid rgba(255,26,26,.25);
+      color: var(--txt);
+      line-height:1.55;
+      font-size:15px;
+    }
+
+    .grid2{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+    .mini{
+      padding:12px;
+      border-radius:16px;
+      background: #070707;
+      border:1px solid var(--line);
+    }
+    .mini h3{
+      margin:0 0 6px;
+      font-size:13px;
+      color: rgba(255,255,255,.88);
+      letter-spacing:.2px;
+      text-transform:uppercase;
+    }
+    .mini p{
+      margin:0;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.5;
+    }
+
+    /* interactive controls */
+    .controls{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn{
+      cursor:pointer;
+      user-select:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,26,26,.35);
+      background: rgba(255,26,26,.10);
+      color:#fff;
+      text-decoration:none;
+      font-size:13px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,26,26,.16); border-color: rgba(255,26,26,.55); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    .btn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .btn.secondary:hover{ background: rgba(255,255,255,.10); }
+
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size:13px;
+      color: rgba(255,255,255,.88);
+    }
+    .switch{
+      width:44px; height:26px;
+      border-radius:999px;
+      background: rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.10);
+      position:relative;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+    .knob{
+      position:absolute; top:3px; left:3px;
+      width:20px; height:20px;
+      border-radius:999px;
+      background:#fff;
+      transition: left .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .switch.on{ background: rgba(255,26,26,.30); border-color: rgba(255,26,26,.35); }
+    .switch.on .knob{ left:21px; background: #fff; box-shadow: 0 0 18px rgba(255,26,26,.55); }
+
+    .slider{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size:13px;
+      color: rgba(255,255,255,.88);
+    }
+    input[type="range"]{
+      width:140px;
+      accent-color: var(--red);
+    }
+
+    /* right side: 3D top-right section */
+    .right{
+      position:relative;
+    }
+
+    .viewer-card{
+      position:sticky;
+      top:74px;
+      background: var(--panel);
+      border:1px solid rgba(255,26,26,.22);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .viewer-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(90deg, rgba(255,26,26,.18), rgba(0,0,0,0));
+    }
+    .viewer-head .label{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .viewer-head strong{
+      font-size:13px;
+      letter-spacing:.3px;
+    }
+    .viewer-head span{
+      font-size:11px;
+      color: var(--muted);
+    }
+
+    .viewer{
+      height:280px; /* sezione in alto a destra */
+      background:#050505;
       padding:12px;
     }
 
     model-viewer{
       width:100%;
       height:100%;
-      background: radial-gradient(circle at 50% 20%, #1a1a1f, #0f0f10 60%);
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,0.08);
-      overflow:hidden;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: radial-gradient(circle at 50% 20%, #1a1a1a, #000 62%);
+      box-shadow: 0 0 26px rgba(255,26,26,.16);
     }
 
-    .tips{
-      padding:10px 16px 16px;
-      text-align:center;
+    .viewer-actions{
+      padding:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+
+    .hint{
+      padding:12px;
+      margin-top:12px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
       font-size:12px;
-      color:rgba(255,255,255,0.7);
+      line-height:1.5;
     }
 
-    .btn{
-      display:inline-block;
-      margin-top:8px;
-      padding:10px 14px;
-      border-radius:12px;
-      background:rgba(255,255,255,0.10);
-      border:1px solid rgba(255,255,255,0.12);
+    /* small toast */
+    .toast{
+      position:fixed;
+      bottom:18px; left:50%;
+      transform: translateX(-50%);
+      background: rgba(10,10,10,.92);
+      border:1px solid rgba(255,26,26,.35);
       color:#fff;
-      text-decoration:none;
+      padding:10px 12px;
+      border-radius:14px;
       font-size:13px;
+      box-shadow: var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index:100;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* responsive */
+    @media (max-width: 980px){
+      .main{ grid-template-columns: 1fr; }
+      .viewer-card{ position:relative; top:auto; }
+      .viewer{ height:320px; }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Modello 3D</h1>
-    <p>Trascina con il dito per ruotare • Pinch per zoomare</p>
-  </header>
+  <div class="bg"></div>
 
-  <div class="wrap">
-    <model-viewer
-      src="elementi/modello/modello.glb"
-      camera-controls
-      touch-action="pan-y"
-      auto-rotate
-      auto-rotate-delay="0"
-      rotation-per-second="18deg"
-      shadow-intensity="1"
-      exposure="1.1"
-      loading="eager"
-      alt="Modello 3D">
-    </model-viewer>
+  <div class="page">
+    <header>
+      <div class="header-inner">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="chip"><span class="dot"></span> Daily Drop</div>
+          <div class="title">
+            <h1>Buongiorno — modalità interattiva</h1>
+            <p>Ruota il modello • Scorri • Tocca i pulsanti</p>
+          </div>
+        </div>
+
+        <a class="btn secondary" href="index.html" style="text-decoration:none;">
+          ← Torna alla mail vibes
+        </a>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- LEFT: content -->
+      <section class="card">
+        <div class="card-topbar"></div>
+        <div class="card-body">
+          <div class="hero">
+            <h2>Buongiorno</h2>
+            <p class="quote" id="quote">
+              You know what i am sayin'
+            </p>
+
+            <div class="grid2">
+              <div class="mini">
+                <h3>Focus</h3>
+                <p id="focusText">Un passo piccolo ma fatto bene batte 100 idee non iniziate.</p>
+              </div>
+              <div class="mini">
+                <h3>Obiettivo</h3>
+                <p id="goalText">Scegli una cosa sola da finire oggi. Poi il resto viene dopo.</p>
+              </div>
+            </div>
+
+            <div class="controls">
+              <button class="btn" id="btnNew">🔁 Nuova vibe</button>
+              <button class="btn" id="btnCopy">📋 Copia frase</button>
+
+              <div class="toggle">
+                <div>Auto-rotate</div>
+                <div class="switch on" id="swRotate" role="switch" aria-checked="true">
+                  <div class="knob"></div>
+                </div>
+              </div>
+
+              <div class="slider">
+                <div>Velocità</div>
+                <input id="speed" type="range" min="6" max="40" value="18" />
+                <div style="min-width:44px; text-align:right;" id="speedVal">18°/s</div>
+              </div>
+
+              <button class="btn secondary" id="btnGlow">✨ Glow</button>
+              <button class="btn secondary" id="btnSnap">📸 Screenshot</button>
+            </div>
+          </div>
+
+          <div class="hint">
+            ahahahahahahahahahahahahahhahaahahahhahahahahahaahahahahhhahah
+            <b> e cosi sia </b>: frase + ahahahahaha 3D + azioni.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: 3D TOP-RIGHT SECTION -->
+      <aside class="right">
+        <div class="viewer-card">
+          <div class="viewer-head">
+            <div class="label">
+              <strong>Modello 3D</strong>
+              <span>Trascina per ruotare • Pinch per zoom</span>
+            </div>
+            <div class="chip" style="padding:6px 10px;">
+              <span class="dot"></span> LIVE
+            </div>
+          </div>
+
+          <div class="viewer">
+            <model-viewer
+              id="mv"
+              src="elementi/modello/modello.glb"
+              camera-controls
+              touch-action="pan-y"
+              auto-rotate
+              auto-rotate-delay="0"
+              rotation-per-second="18deg"
+              shadow-intensity="1"
+              exposure="1.1"
+              loading="eager"
+              alt="Modello 3D">
+            </model-viewer>
+          </div>
+
+          <div class="viewer-actions">
+            <button class="btn" id="btnReset">↩️ Reset</button>
+            <button class="btn secondary" id="btnLight">💡 Light</button>
+            <a class="btn secondary" href="elementi/modello/modello.glb" download>⬇️ Scarica .glb</a>
+          </div>
+        </div>
+      </aside>
+    </main>
   </div>
 
-  <div class="tips">
-    <a class="btn" href="modello.glb">Scarica il file .glb</a>
-  </div>
+  <div class="toast" id="toast">Copiato ✨</div>
+
+  <script>
+    const mv = document.getElementById("mv");
+    const toast = document.getElementById("toast");
+
+    const swRotate = document.getElementById("swRotate");
+    const speed = document.getElementById("speed");
+    const speedVal = document.getElementById("speedVal");
+
+    const btnReset = document.getElementById("btnReset");
+    const btnNew = document.getElementById("btnNew");
+    const btnCopy = document.getElementById("btnCopy");
+    const btnGlow = document.getElementById("btnGlow");
+    const btnSnap = document.getElementById("btnSnap");
+    const btnLight = document.getElementById("btnLight");
+
+    const quote = document.getElementById("quote");
+    const focusText = document.getElementById("focusText");
+    const goalText = document.getElementById("goalText");
+
+    const vibes = [
+      { q:"{{FRASE_MATTINO}}", f:"Respiro. Fuoco. Precisione.", g:"Chiudi una cosa. Una sola." },
+      { q:"Oggi non serve essere perfetti: serve essere presenti.", f:"Fai partire il primo minuto.", g:"Taglia il superfluo." },
+      { q:"Se ti senti lento, stai solo caricando potenza.", f:"Costanza > intensità.", g:"Un’azione che puoi finire in 20 min." },
+      { q:"La disciplina è stile. Lo stile è libertà.", f:"Rendi semplice il prossimo step.", g:"Completa prima di ottimizzare." }
+    ];
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=>toast.classList.remove("show"), 1100);
+    }
+
+    // Toggle auto-rotate
+    swRotate.addEventListener("click", () => {
+      const on = swRotate.classList.toggle("on");
+      swRotate.setAttribute("aria-checked", on ? "true" : "false");
+      mv.autoRotate = on;
+      showToast(on ? "Auto-rotate ON" : "Auto-rotate OFF");
+    });
+
+    // Speed control
+    function updateSpeed(){
+      const v = Number(speed.value);
+      mv.setAttribute("rotation-per-second", v + "deg");
+      speedVal.textContent = v + "°/s";
+    }
+    speed.addEventListener("input", updateSpeed);
+    updateSpeed();
+
+    // Reset camera
+    btnReset.addEventListener("click", async () => {
+      try{
+        // resetTurntableRotation + resetCameraOrbit sono supportati in molte versioni
+        if (mv.resetTurntableRotation) mv.resetTurntableRotation();
+        if (mv.resetCameraOrbit) mv.resetCameraOrbit();
+        showToast("Reset ✅");
+      }catch(e){
+        showToast("Reset fatto");
+      }
+    });
+
+    // New vibe (cambia testi)
+    btnNew.addEventListener("click", () => {
+      const v = vibes[Math.floor(Math.random()*vibes.length)];
+      quote.textContent = v.q;
+      focusText.textContent = v.f;
+      goalText.textContent = v.g;
+      showToast("Nuova vibe ✨");
+    });
+
+    // Copy phrase
+    btnCopy.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(quote.textContent.trim());
+        showToast("Frase copiata 📋");
+      }catch(e){
+        showToast("Copia manuale");
+      }
+    });
+
+    // Glow toggle (cambia “mood” del modello)
+    let glowOn = true;
+    btnGlow.addEventListener("click", () => {
+      glowOn = !glowOn;
+      mv.style.boxShadow = glowOn
+        ? "0 0 26px rgba(255,26,26,.16)"
+        : "none";
+      showToast(glowOn ? "Glow ON ✨" : "Glow OFF");
+    });
+
+    // Light toggle (exposure)
+    let bright = true;
+    btnLight.addEventListener("click", () => {
+      bright = !bright;
+      mv.setAttribute("exposure", bright ? "1.1" : "0.85");
+      showToast(bright ? "Light +" : "Light -");
+    });
+
+    // Screenshot (download png)
+    btnSnap.addEventListener("click", async () => {
+      try{
+        const blob = await mv.toBlob({ idealAspect: true });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "daily-drop.png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast("Screenshot salvato 📸");
+      }catch(e){
+        showToast("Screenshot non supportato");
+      }
+    });
+  </script>
 </body>
 </html>
