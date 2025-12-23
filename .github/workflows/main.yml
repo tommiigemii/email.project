@@ -1,8 +1,10 @@
 name: Daily Email
 
 on:
+  # ⚠️ prima avevi "* * * * *" = ogni minuto (spam + caos)
+  # Metti una volta al giorno. Esempio: 07:00 UTC (08:00 CET in inverno)
   schedule:
-    - cron: "* * * * *"   # 08:00 CET (inverno). In estate cambia.
+    - cron: "0 7 * * *"
   workflow_dispatch:
 
 permissions:
@@ -32,42 +34,62 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Load EMAIL_DATA into env (optional)
-        if: ${{ secrets.EMAIL_DATA != '' }}
+      # Carica tutte le variabili dal secret EMAIL_DATA (righe KEY=VALUE)
+      - name: Load EMAIL_DATA into env
         run: |
+          if [ -z "${{ secrets.EMAIL_DATA }}" ]; then
+            echo "Missing secret: EMAIL_DATA"
+            exit 1
+          fi
           printf "%s\n" "${{ secrets.EMAIL_DATA }}" >> "$GITHUB_ENV"
 
-      # ✅ Se preferisci secrets singoli, aggiungi questo step (invece di EMAIL_DATA)
-      # - name: Export secrets to env
-      #   run: |
-      #     echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> "$GITHUB_ENV"
-      #     echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> "$GITHUB_ENV"
-      #     echo "EMAIL_SUBJECT=${{ secrets.EMAIL_SUBJECT }}" >> "$GITHUB_ENV"
-      #     echo "EMAIL_RECIPIENTS=${{ secrets.EMAIL_RECIPIENTS }}" >> "$GITHUB_ENV"
-      #     echo "LINK_3D=${{ secrets.LINK_3D }}" >> "$GITHUB_ENV"
-      #     echo "IMG_PREVIEW=${{ secrets.IMG_PREVIEW }}" >> "$GITHUB_ENV"
-
-      - name: Sanity check (no values printed)
+      # Debug sicuro: stampa solo se le chiavi esistono (non stampa valori)
+      - name: Sanity check (safe)
         run: |
           python - <<'PY'
           import os
 
-          required = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D", "IMG_PREVIEW"]
-          missing = [k for k in required if not os.getenv(k)]
+          must = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D", "IMG_PREVIEW"]
+          missing = [k for k in must if not os.getenv(k)]
 
-          # accetta EMAIL_RECIPIENT o EMAIL_RECIPIENTS
           if not (os.getenv("EMAIL_RECIPIENT") or os.getenv("EMAIL_RECIPIENTS")):
-            missing.append("EMAIL_RECIPIENTS (or EMAIL_RECIPIENT)")
+              missing.append("EMAIL_RECIPIENTS (or EMAIL_RECIPIENT)")
 
-          # template: file o html inline
           if not (os.getenv("EMAIL_BODY_FILE") or os.getenv("EMAIL_BODY")):
-            missing.append("EMAIL_BODY_FILE (or EMAIL_BODY)")
+              missing.append("EMAIL_BODY_FILE (or EMAIL_BODY)")
 
           if missing:
               raise SystemExit(f"Missing env vars: {missing}")
 
-          print("OK: required env vars are set.")
+          # controlla che IMG_PREVIEW sia un URL pubblico
+          img = os.getenv("IMG_PREVIEW", "")
+          if not (img.startswith("https://") or img.startswith("cid:")):
+              raise SystemExit("IMG_PREVIEW must be an https:// URL (GitHub Pages) or cid:... (inline).")
+
+          print("OK: env vars look good.")
           PY
+
+      # Controllo file template (se usi EMAIL_BODY_FILE)
+      - name: Check template file exists (if using EMAIL_BODY_FILE)
+        run: |
+          if [ -n "${EMAIL_BODY_FILE}" ]; then
+            echo "EMAIL_BODY_FILE=${EMAIL_BODY_FILE}"
+            if [ ! -f "${EMAIL_BODY_FILE}" ]; then
+              echo "Template file not found: ${EMAIL_BODY_FILE}"
+              echo "Repo files (maxdepth 3):"
+              find . -maxdepth 3 -type f
+              exit 1
+            fi
+            echo "Template OK"
+          else
+            echo "EMAIL_BODY_FILE not set (using EMAIL_BODY inline)"
+          fi
+
+      # Controllo path script (evita errori stupidi)
+      - name: Check script exists
+        run: |
+          test -f email.addresser/email.addresser.py || (echo "Missing script: email.addresser/email.addresser.py" && find . -maxdepth 4 -type f && exit 1)
+          echo "Script OK"
 
       - name: Send email
         run: python email.addresser/email.addresser.py
