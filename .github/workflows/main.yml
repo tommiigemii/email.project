@@ -4,7 +4,7 @@ on:
   # ⚠️ prima avevi "* * * * *" = ogni minuto (spam + caos)
   # Metti una volta al giorno. Esempio: 07:00 UTC (08:00 CET in inverno)
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "0 7 * * *"
   workflow_dispatch:
 
 permissions:
