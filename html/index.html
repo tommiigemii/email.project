@@ -3,60 +3,61 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daily Drop • Modello 3D</title>
+  <title>Buongiorno • Start Clean</title>
 
   <!-- model-viewer (ufficiale) -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
     :root{
-      --bg:#000000;
-      --panel:#0a0a0a;
-      --panel2:#0f0f0f;
-      --txt:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.70);
-      --line:rgba(255,255,255,.10);
-      --red:#ff1a1a;
-      --red2:#ff3b3b;
-      --shadow: 0 18px 60px rgba(0,0,0,.72);
-      --radius:18px;
+      --bg0:#06070c;
+      --bg1:#0b1020;
+
+      --glass: rgba(255,255,255,.06);
+      --glass2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+
+      /* morning accents */
+      --sky: rgba(120,180,255,.55);
+      --sun: rgba(255,170,120,.45);
+      --mint: rgba(130,255,200,.45);
+
+      --shadow: 0 18px 60px rgba(0,0,0,.60);
+      --radius: 22px;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color:#fff;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--txt);
+      background:
+        radial-gradient(1200px 900px at 20% 10%, rgba(120,180,255,.15), rgba(0,0,0,0) 55%),
+        radial-gradient(900px 700px at 85% 25%, rgba(255,170,120,.11), rgba(0,0,0,0) 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
       overflow-x:hidden;
     }
 
-    /* background glow (solo CSS, non invasivo) */
-    .bg{
+    /* soft grain texture */
+    .grain{
       position:fixed; inset:0;
       pointer-events:none;
-      background:
-        radial-gradient(circle at 80% 10%, rgba(255,26,26,.22), rgba(0,0,0,0) 45%),
-        radial-gradient(circle at 20% 70%, rgba(255,26,26,.10), rgba(0,0,0,0) 55%);
-      filter: blur(0px);
-      opacity:.85;
+      opacity:.10;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
     }
 
-    /* layout */
-    .page{
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-    }
+    .page{ min-height:100vh; display:flex; flex-direction:column; }
 
     header{
-      position:sticky;
-      top:0;
-      z-index:50;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(10px);
-      border-bottom:1px solid var(--line);
+      position:sticky; top:0; z-index:50;
+      background: rgba(10,12,18,.55);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
     }
 
     .header-inner{
@@ -69,128 +70,216 @@
       gap:12px;
     }
 
-    .chip{
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .pill{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:7px 12px;
+      padding:8px 12px;
       border-radius:999px;
-      background: rgba(255,26,26,.10);
-      border:1px solid rgba(255,26,26,.35);
-      color: rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
       font-size:12px;
-      letter-spacing:.7px;
+      letter-spacing:.6px;
       text-transform:uppercase;
+      white-space:nowrap;
     }
+
     .dot{
-      width:8px;height:8px;border-radius:999px;
-      background: var(--red);
-      box-shadow: 0 0 18px rgba(255,26,26,.65);
+      width:9px;height:9px;border-radius:999px;
+      background: var(--sun);
+      box-shadow: 0 0 22px rgba(255,170,120,.35);
     }
 
     .title{
       display:flex;
       flex-direction:column;
       gap:2px;
-      line-height:1.1;
+      min-width:0;
     }
     .title h1{
       margin:0;
-      font-size:16px;
+      font-size:15px;
       letter-spacing:.2px;
+      font-weight:750;
     }
     .title p{
       margin:0;
       font-size:12px;
       color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    .main{
+    .link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color:#fff;
+      text-decoration:none;
+      font-size:13px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .link:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22); }
+    .link:active{ transform: translateY(0px) scale(.99); }
+
+    main{
       max-width:1200px;
       margin:0 auto;
       width:100%;
-      padding:18px 16px 26px;
+      padding:18px 16px 30px;
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
+      grid-template-columns: 1.15fr .85fr;
       gap:16px;
       align-items:start;
     }
 
-    /* left content */
     .card{
-      background: linear-gradient(180deg, rgba(255,26,26,.08), rgba(0,0,0,0) 55%), var(--panel);
+      background: var(--glass);
       border:1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
 
-    .card-topbar{
-      height:6px;
-      background: var(--red);
-    }
+    .card-body{ padding:16px; }
 
-    .card-body{
-      padding:16px;
-    }
-
+    /* HERO */
     .hero{
       display:flex;
       flex-direction:column;
+      gap:12px;
+    }
+
+    .heroTop{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
       gap:10px;
+      flex-wrap:wrap;
     }
 
-    .hero h2{
+    .hello{
       margin:0;
-      font-size:26px;
+      font-size:30px;
       letter-spacing:.2px;
+      font-weight:800;
+    }
+    .sub{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.4;
     }
 
-    .hero .quote{
-      margin:0;
+    .metaRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .badge{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: rgba(255,255,255,.86);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .badge b{ font-weight:800; }
+
+    /* Quote */
+    .quote{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      border-radius: 18px;
       padding:14px;
-      border-radius:16px;
-      background: var(--panel2);
-      border:1px solid rgba(255,26,26,.25);
-      color: var(--txt);
       line-height:1.55;
       font-size:15px;
+      position:relative;
+      overflow:hidden;
+    }
+    .quote::before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:120px; height:120px;
+      background: radial-gradient(circle, rgba(255,170,120,.18), rgba(0,0,0,0) 65%);
+      transform: rotate(10deg);
+      pointer-events:none;
     }
 
-    .grid2{
-      margin-top:12px;
+    /* Layout blocks */
+    .grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
     }
 
-    .mini{
+    .block{
       padding:12px;
-      border-radius:16px;
-      background: #070707;
-      border:1px solid var(--line);
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.045);
     }
-    .mini h3{
-      margin:0 0 6px;
-      font-size:13px;
-      color: rgba(255,255,255,.88);
-      letter-spacing:.2px;
-      text-transform:uppercase;
-    }
-    .mini p{
-      margin:0;
+    .block h3{
+      margin:0 0 8px;
       font-size:12px;
+      letter-spacing:.7px;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.80);
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .block p{
+      margin:0;
+      font-size:12.5px;
       color: var(--muted);
-      line-height:1.5;
+      line-height:1.55;
     }
 
-    /* interactive controls */
-    .controls{
-      margin-top:12px;
+    /* Inputs */
+    textarea, input[type="text"]{
+      width:100%;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--txt);
+      border-radius:14px;
+      padding:10px 10px;
+      outline:none;
+      transition: border-color .12s ease, background .12s ease;
+      font-size:13px;
+    }
+    textarea{ min-height:92px; resize: vertical; }
+    textarea:focus, input[type="text"]:focus{
+      border-color: rgba(120,180,255,.35);
+      background: rgba(255,255,255,.07);
+    }
+
+    .row{
       display:flex;
-      flex-wrap:wrap;
       gap:10px;
       align-items:center;
+      flex-wrap:wrap;
+      margin-top:10px;
     }
 
     .btn{
@@ -202,78 +291,144 @@
       gap:8px;
       padding:10px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,26,26,.35);
-      background: rgba(255,26,26,.10);
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
       color:#fff;
-      text-decoration:none;
       font-size:13px;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,26,26,.16); border-color: rgba(255,26,26,.55); }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22); }
     .btn:active{ transform: translateY(0px) scale(.99); }
 
-    .btn.secondary{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
+    .btn.primary{
+      border-color: rgba(255,170,120,.35);
+      background: linear-gradient(90deg, rgba(255,170,120,.16), rgba(120,180,255,.10));
     }
-    .btn.secondary:hover{ background: rgba(255,255,255,.10); }
+    .btn.primary:hover{ filter: brightness(1.05); }
 
-    .toggle{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      font-size:13px;
-      color: rgba(255,255,255,.88);
+    .mutedSmall{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.5;
     }
-    .switch{
-      width:44px; height:26px;
-      border-radius:999px;
-      background: rgba(255,255,255,.14);
+
+    /* Checklist */
+    .checks{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:8px;
+    }
+    .check{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
-      position:relative;
-      cursor:pointer;
+      background: rgba(255,255,255,.04);
+    }
+    .check input{
+      margin-top:2px;
+      width:18px; height:18px;
+      accent-color: rgba(255,170,120,.75);
       flex:0 0 auto;
     }
-    .knob{
-      position:absolute; top:3px; left:3px;
-      width:20px; height:20px;
-      border-radius:999px;
-      background:#fff;
-      transition: left .18s ease, background .18s ease, box-shadow .18s ease;
+    .check label{
+      cursor:pointer;
+      font-size:13px;
+      color: rgba(255,255,255,.86);
+      line-height:1.35;
     }
-    .switch.on{ background: rgba(255,26,26,.30); border-color: rgba(255,26,26,.35); }
-    .switch.on .knob{ left:21px; background: #fff; box-shadow: 0 0 18px rgba(255,26,26,.55); }
+    .check label span{
+      display:block;
+      font-size:12px;
+      color: var(--muted);
+      margin-top:2px;
+    }
 
-    .slider{
+    /* Progress */
+    .progressWrap{
+      margin-top:10px;
       display:flex;
       align-items:center;
       gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+    }
+    .bar{
+      height:10px;
+      flex:1 1 auto;
+      border-radius:999px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .fill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(255,170,120,.65), rgba(120,180,255,.55));
+      border-radius:999px;
+      transition: width .18s ease;
+    }
+    .pct{
+      width:56px;
+      text-align:right;
+      font-size:12px;
+      color: rgba(255,255,255,.85);
+    }
+
+    /* Breath */
+    .breathBox{
+      margin-top:8px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius:18px;
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .breathTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .breathState{
       font-size:13px;
       color: rgba(255,255,255,.88);
+      font-weight:750;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
-    input[type="range"]{
-      width:140px;
-      accent-color: var(--red);
+    .bubble{
+      width:12px; height:12px; border-radius:999px;
+      background: var(--mint);
+      box-shadow: 0 0 22px rgba(130,255,200,.25);
+    }
+    .breathHint{
+      margin:8px 0 0;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+    .ring{
+      position:absolute;
+      right:-60px; bottom:-60px;
+      width:180px; height:180px;
+      border-radius:999px;
+      border:1px solid rgba(130,255,200,.18);
+      background: radial-gradient(circle, rgba(130,255,200,.10), rgba(0,0,0,0) 60%);
+      transform: rotate(10deg);
+      pointer-events:none;
     }
 
-    /* right side: 3D top-right section */
-    .right{
-      position:relative;
-    }
-
+    /* Viewer */
     .viewer-card{
       position:sticky;
       top:74px;
-      background: var(--panel);
-      border:1px solid rgba(255,26,26,.22);
+      background: var(--glass);
+      border:1px solid rgba(255,255,255,.12);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
@@ -282,67 +437,45 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:8px;
+      gap:10px;
       padding:12px 12px;
       border-bottom:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(90deg, rgba(255,26,26,.18), rgba(0,0,0,0));
+      background: linear-gradient(90deg, rgba(120,180,255,.12), rgba(0,0,0,0));
     }
-    .viewer-head .label{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    .viewer-head strong{
-      font-size:13px;
-      letter-spacing:.3px;
-    }
-    .viewer-head span{
-      font-size:11px;
-      color: var(--muted);
-    }
+    .viewer-head strong{ font-size:13px; letter-spacing:.3px; }
+    .viewer-head span{ font-size:11px; color: var(--muted); }
 
     .viewer{
-      height:280px; /* sezione in alto a destra */
-      background:#050505;
+      height:280px;
+      background: rgba(0,0,0,.18);
       padding:12px;
     }
 
     model-viewer{
       width:100%;
       height:100%;
-      border-radius:16px;
+      border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
-      background: radial-gradient(circle at 50% 20%, #1a1a1a, #000 62%);
-      box-shadow: 0 0 26px rgba(255,26,26,.16);
+      background: radial-gradient(circle at 50% 20%, rgba(255,255,255,.08), rgba(0,0,0,.55) 62%);
+      box-shadow: 0 0 22px rgba(120,180,255,.12);
     }
 
-    .viewer-actions{
+    .viewer-note{
       padding:12px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
       border-top:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
-    }
-
-    .hint{
-      padding:12px;
-      margin-top:12px;
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
       color: var(--muted);
       font-size:12px;
       line-height:1.5;
     }
 
-    /* small toast */
+    /* Toast */
     .toast{
       position:fixed;
       bottom:18px; left:50%;
       transform: translateX(-50%);
-      background: rgba(10,10,10,.92);
-      border:1px solid rgba(255,26,26,.35);
+      background: rgba(16,18,24,.92);
+      border:1px solid rgba(255,255,255,.14);
       color:#fff;
       padding:10px 12px;
       border-radius:14px;
@@ -358,153 +491,196 @@
       transform: translateX(-50%) translateY(-2px);
     }
 
-    /* responsive */
     @media (max-width: 980px){
-      .main{ grid-template-columns: 1fr; }
+      main{ grid-template-columns: 1fr; }
       .viewer-card{ position:relative; top:auto; }
       .viewer{ height:320px; }
+      .grid{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
-  <div class="bg"></div>
+  <div class="grain"></div>
 
   <div class="page">
     <header>
       <div class="header-inner">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="chip"><span class="dot"></span> Daily Drop</div>
+        <div class="brand">
+          <div class="pill"><span class="dot"></span> Buongiorno Mode</div>
           <div class="title">
-            <h1>Buongiorno — modalità interattiva</h1>
-            <p>Ruota il modello • Scorri • Tocca i pulsanti</p>
+            <h1 id="topTitle">Start Clean — crazy chill edition</h1>
+            <p id="topSub">Calma fuori, focus dentro. Bloodline attiva.</p>
           </div>
         </div>
 
-        <a class="btn secondary" href="index.html" style="text-decoration:none;">
-          ← Torna alla mail vibes
-        </a>
+        <a class="link" href="index.html">← Torna alla mail vibes</a>
       </div>
     </header>
 
-    <main class="main">
-      <!-- LEFT: content -->
+    <main>
+      <!-- LEFT: Morning content -->
       <section class="card">
-        <div class="card-topbar"></div>
         <div class="card-body">
           <div class="hero">
-            <h2>Buongiorno</h2>
-            <p class="quote" id="quote">
-              You know what i am sayin'
-            </p>
-
-            <div class="grid2">
-              <div class="mini">
-                <h3>Focus</h3>
-                <p id="focusText">Un passo piccolo ma fatto bene batte 100 idee non iniziate.</p>
+            <div class="heroTop">
+              <div>
+                <h2 class="hello" id="hello">Buongiorno ☀️</h2>
+                <p class="sub" id="subText">Crazy energy, clean execution. Oggi si parte bene e si resta lucidi.</p>
               </div>
-              <div class="mini">
-                <h3>Obiettivo</h3>
-                <p id="goalText">Scegli una cosa sola da finire oggi. Poi il resto viene dopo.</p>
+
+              <div class="metaRow">
+                <div class="badge">📅 <b id="today">—</b></div>
+                <div class="badge">🕘 Ora: <b id="timeNow">—</b></div>
               </div>
             </div>
 
-            <div class="controls">
-              <button class="btn" id="btnNew">🔁 Nuova vibe</button>
-              <button class="btn" id="btnCopy">📋 Copia frase</button>
+            <div class="quote" id="quote">
+              “Chill fuori. Focus dentro. Oggi fai una cosa fatta bene e il mondo si zittisce.”
+            </div>
 
-              <div class="toggle">
-                <div>Auto-rotate</div>
-                <div class="switch on" id="swRotate" role="switch" aria-checked="true">
-                  <div class="knob"></div>
+            <!-- Morning plan -->
+            <div class="grid">
+              <!-- Intention -->
+              <div class="block">
+                <h3>🎯 Intenzione</h3>
+                <!-- QUESTA PARTE È GIÀ MODIFICATA DA TE: LA LASCIO COM'È -->
+                <p class="mutedSmall">Scrivi in 10 parole come vuoi stare oggi. (Esempio: “chill chaos, Marsi confidence, bloodline mindset, Chief Keef 1983 energy”).</p>
+                <div style="margin-top:10px;">
+                  <input id="intention" type="text" placeholder="La mia intenzione di oggi è..." />
                 </div>
               </div>
 
-              <div class="slider">
-                <div>Velocità</div>
-                <input id="speed" type="range" min="6" max="40" value="18" />
-                <div style="min-width:44px; text-align:right;" id="speedVal">18°/s</div>
+              <!-- Gratitude -->
+              <div class="block">
+                <h3>🙏 Gratitudine</h3>
+                <p class="mutedSmall">Tre cose piccole, vere. Non poesia: grounding. Ti rimette in carreggiata dubito.</p>
+                <div style="margin-top:10px;">
+                  <textarea id="gratitude" placeholder="1) ...&#10;2) ...&#10;3) ..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checklist + progress -->
+            <div class="block" style="margin-top:10px;">
+              <h3>✅ Start Checklist</h3>
+              <p class="mutedSmall">Spunta e alza la barra: dopamine pulito, zero caos.</p>
+
+              <div class="checks" id="checks">
+                <div class="check">
+                  <input type="checkbox" id="c1">
+                  <label for="c1">
+                    Acqua + terea
+                    <span>60 secondi: ti sveglia senza stress. Sì, è il tuo “starter pack”.</span>
+                  </label>
+                </div>
+                <div class="check">
+                  <input type="checkbox" id="c2">
+                  <label for="c2">
+                    10 respiri lenti
+                    <span>Nasale, spalle giù. Modalità “capo calmo”.</span>
+                  </label>
+                </div>
+
+                <!-- QUI C'ERA ALCOL: LO RENDO SAFE MA STESSO MOOD -->
+                <div class="check">
+                  <input type="checkbox" id="c3">
+                  <label for="c3">
+                    Jäger Boost (zero alcol)
+                    <span>Glu glu glu… ma d’acqua. Energia pulita, niente crash.</span>
+                  </label>
+                </div>
+
+                <!-- QUI C'ERA VIOLENZA: LO RENDO SAFE MA STESSO MOOD -->
+                <div class="check">
+                  <input type="checkbox" id="c4">
+                  <label for="c4">
+                    Una cosa sola “da chiudere”
+                    <span>Oggi vinci se insulti ANDREA PIERONI. Il resto è rumore.</span>
+                  </label>
+                </div>
               </div>
 
-              <button class="btn secondary" id="btnGlow">✨ Glow</button>
-              <button class="btn secondary" id="btnSnap">📸 Screenshot</button>
+              <div class="progressWrap">
+                <div class="bar"><div class="fill" id="fill"></div></div>
+                <div class="pct" id="pct">0%</div>
+              </div>
             </div>
-          </div>
 
-          <div class="hint">
-            ahahahahahahahahahahahahahhahaahahahhahahahahahaahahahahhhahah
-            <b> e cosi sia </b>: frase + ahahahahaha 3D + azioni.
+            <!-- Breathing mini -->
+            <div class="block" style="margin-top:10px;">
+              <h3>🌿 60 secondi di respiro</h3>
+              <p class="mutedSmall">Premi start: ti guida per 1 minuto. È la tua “reset spell” prima di partire.</p>
+
+              <div class="breathBox">
+                <div class="breathTop">
+                  <div class="breathState"><span class="bubble"></span><span id="breathState">Pronto</span></div>
+                  <div class="badge">⏱️ <b id="breathTimer">01:00</b></div>
+                </div>
+                <p class="breathHint" id="breathHint">Quando parte: segui il testo. Se la mente corre, tu resti capo a.k.a degustibus.</p>
+                <div class="row" style="margin-top:10px;">
+                  <button class="btn primary" id="breathStart">▶ Start</button>
+                  <button class="btn" id="breathReset">↺ Reset</button>
+                </div>
+                <div class="ring"></div>
+              </div>
+            </div>
+
+            <!-- Day vibe -->
+            <div class="row" style="margin-top:12px;">
+              <button class="btn primary" id="newVibe">🔁 Nuova frase del mattino</button>
+              <button class="btn" id="copyQuote">📋 Copia frase</button>
+              <button class="btn" id="saveLocal">💾 Salva (locale)</button>
+              <button class="btn" id="loadLocal">📂 Carica</button>
+            </div>
+
+            <p class="mutedSmall" style="margin:10px 2px 0;">
+              Nota: il salvataggio è <b>solo sul tuo browser</b>. E sì: Paolo (il gatto) ha già deciso che oggi sei capace 😼
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- RIGHT: 3D TOP-RIGHT SECTION -->
-      <aside class="right">
-        <div class="viewer-card">
-          <div class="viewer-head">
-            <div class="label">
-              <strong>Modello 3D</strong>
-              <span>Trascina per ruotare • Pinch per zoom</span>
-            </div>
-            <div class="chip" style="padding:6px 10px;">
-              <span class="dot"></span> LIVE
-            </div>
+      <!-- RIGHT: 3D -->
+      <aside class="viewer-card">
+        <div class="viewer-head">
+          <div>
+            <strong>Modello 3D</strong><br/>
+            <span>Trascina per ruotare • Pinch per zoom • Auto-rotate soft</span>
           </div>
+          <div class="pill" style="padding:6px 10px;">
+            <span class="dot"></span> LIVE
+          </div>
+        </div>
 
-          <div class="viewer">
-            <model-viewer
-              id="mv"
-              src="elementi/modello/modello.glb"
-              camera-controls
-              touch-action="pan-y"
-              auto-rotate
-              auto-rotate-delay="0"
-              rotation-per-second="18deg"
-              shadow-intensity="1"
-              exposure="1.1"
-              loading="eager"
-              alt="Modello 3D">
-            </model-viewer>
-          </div>
+        <div class="viewer">
+          <model-viewer
+            id="mv"
+            src="elementi/modello/modello.glb"
+            camera-controls
+            touch-action="pan-y"
+            auto-rotate
+            auto-rotate-delay="0"
+            rotation-per-second="10deg"
+            shadow-intensity="0.9"
+            exposure="1.05"
+            loading="eager"
+            alt="Modello 3D">
+          </model-viewer>
+        </div>
 
-          <div class="viewer-actions">
-            <button class="btn" id="btnReset">↩️ Reset</button>
-            <button class="btn secondary" id="btnLight">💡 Light</button>
-            <a class="btn secondary" href="elementi/modello/modello.glb" download>⬇️ Scarica .glb</a>
-          </div>
+        <div class="viewer-note">
+          Micro-idea: mentre ruota, fai 3 respiri lenti. Mood: <b>Chief Keef 1983</b> (calmo, presente, in controllo).
         </div>
       </aside>
     </main>
   </div>
 
-  <div class="toast" id="toast">Copiato ✨</div>
+  <div class="toast" id="toast">Ok ✨</div>
 
   <script>
-    const mv = document.getElementById("mv");
+    // ---------- Helpers
     const toast = document.getElementById("toast");
-
-    const swRotate = document.getElementById("swRotate");
-    const speed = document.getElementById("speed");
-    const speedVal = document.getElementById("speedVal");
-
-    const btnReset = document.getElementById("btnReset");
-    const btnNew = document.getElementById("btnNew");
-    const btnCopy = document.getElementById("btnCopy");
-    const btnGlow = document.getElementById("btnGlow");
-    const btnSnap = document.getElementById("btnSnap");
-    const btnLight = document.getElementById("btnLight");
-
-    const quote = document.getElementById("quote");
-    const focusText = document.getElementById("focusText");
-    const goalText = document.getElementById("goalText");
-
-    const vibes = [
-      { q:"{{FRASE_MATTINO}}", f:"Respiro. Fuoco. Precisione.", g:"Chiudi una cosa. Una sola." },
-      { q:"Oggi non serve essere perfetti: serve essere presenti.", f:"Fai partire il primo minuto.", g:"Taglia il superfluo." },
-      { q:"Se ti senti lento, stai solo caricando potenza.", f:"Costanza > intensità.", g:"Un’azione che puoi finire in 20 min." },
-      { q:"La disciplina è stile. Lo stile è libertà.", f:"Rendi semplice il prossimo step.", g:"Completa prima di ottimizzare." }
-    ];
-
     function showToast(msg){
       toast.textContent = msg;
       toast.classList.add("show");
@@ -512,89 +688,242 @@
       showToast._t = setTimeout(()=>toast.classList.remove("show"), 1100);
     }
 
-    // Toggle auto-rotate
-    swRotate.addEventListener("click", () => {
-      const on = swRotate.classList.toggle("on");
-      swRotate.setAttribute("aria-checked", on ? "true" : "false");
-      mv.autoRotate = on;
-      showToast(on ? "Auto-rotate ON" : "Auto-rotate OFF");
-    });
-
-    // Speed control
-    function updateSpeed(){
-      const v = Number(speed.value);
-      mv.setAttribute("rotation-per-second", v + "deg");
-      speedVal.textContent = v + "°/s";
+    function pad(n){ return String(n).padStart(2,"0"); }
+    function fmtDate(d){
+      return d.toLocaleDateString("it-IT", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
     }
-    speed.addEventListener("input", updateSpeed);
-    updateSpeed();
+    function fmtTime(d){
+      return pad(d.getHours()) + ":" + pad(d.getMinutes());
+    }
+    function greetingByHour(h){
+      if (h >= 5 && h < 12) return {
+        hello:"Buongiorno ☀️",
+        sub:"Crazy energy, clean execution. Bloodline attiva.",
+        topSub:"Calma fuori, focus dentro. You know what I’m saying."
+      };
+      if (h >= 12 && h < 18) return {
+        hello:"Buon pomeriggio 🌤️",
+        sub:"Resta chill senza stress e andrea.",
+        topSub:"Meno rumore. Più controllo. Più stile."
+      };
+      return {
+        hello:"Buonasera 🌙",
+        sub:"Chiudi pulito: poco, ma con terea. Domani si riparte più forti.",
+        topSub:"Calma e chiusura. Poi riposo. Paolo approva."
+      };
+    }
 
-    // Reset camera
-    btnReset.addEventListener("click", async () => {
-      try{
-        // resetTurntableRotation + resetCameraOrbit sono supportati in molte versioni
-        if (mv.resetTurntableRotation) mv.resetTurntableRotation();
-        if (mv.resetCameraOrbit) mv.resetCameraOrbit();
-        showToast("Reset ✅");
-      }catch(e){
-        showToast("Reset fatto");
-      }
+    // ---------- Init header + live clock
+    const hello = document.getElementById("hello");
+    const subText = document.getElementById("subText");
+    const today = document.getElementById("today");
+    const timeNow = document.getElementById("timeNow");
+    const topSub = document.getElementById("topSub");
+
+    function refreshTime(){
+      const now = new Date();
+      today.textContent = fmtDate(now);
+      timeNow.textContent = fmtTime(now);
+      const g = greetingByHour(now.getHours());
+      hello.textContent = g.hello;
+      subText.textContent = g.sub;
+      topSub.textContent = g.topSub;
+    }
+    refreshTime();
+    setInterval(refreshTime, 15000);
+
+    // ---------- Quotes (kinda crazy / chill / funny / bloodline)
+    const quote = document.getElementById("quote");
+    const vibes = [
+      "“Crazy energy, calm execution. Oggi: una aisha chiusa e via.”",
+      "“Chill fuori, quiesa dentro. La giornata ti insegue.”",
+      "“Bloodline mindset.”",
+      "“Anna Pepe aura: fai partire il primo minuto.”",
+      "“Se la mente corre, ANDREA PIERONI merda.”",
+      "“Chief Keef 1983 mood: calmo, freddo, in controllo.”",
+      "“Oggi si vince con stile: semplice, pulito, finito.”"
+    ];
+
+    document.getElementById("newVibe").addEventListener("click", () => {
+      quote.textContent = vibes[Math.floor(Math.random() * vibes.length)];
+      showToast("Vibe aggiornata ☀️");
     });
 
-    // New vibe (cambia testi)
-    btnNew.addEventListener("click", () => {
-      const v = vibes[Math.floor(Math.random()*vibes.length)];
-      quote.textContent = v.q;
-      focusText.textContent = v.f;
-      goalText.textContent = v.g;
-      showToast("Nuova vibe ✨");
-    });
-
-    // Copy phrase
-    btnCopy.addEventListener("click", async () => {
+    document.getElementById("copyQuote").addEventListener("click", async () => {
       try{
         await navigator.clipboard.writeText(quote.textContent.trim());
-        showToast("Frase copiata 📋");
+        showToast("Copiato 📋");
       }catch(e){
         showToast("Copia manuale");
       }
     });
 
-    // Glow toggle (cambia “mood” del modello)
-    let glowOn = true;
-    btnGlow.addEventListener("click", () => {
-      glowOn = !glowOn;
-      mv.style.boxShadow = glowOn
-        ? "0 0 26px rgba(255,26,26,.16)"
-        : "none";
-      showToast(glowOn ? "Glow ON ✨" : "Glow OFF");
+    // ---------- Checklist progress
+    const checksWrap = document.getElementById("checks");
+    const fill = document.getElementById("fill");
+    const pct = document.getElementById("pct");
+
+    function updateProgress(){
+      const boxes = checksWrap.querySelectorAll('input[type="checkbox"]');
+      const total = boxes.length;
+      let done = 0;
+      boxes.forEach(b => { if (b.checked) done++; });
+      const p = total ? Math.round((done / total) * 100) : 0;
+      fill.style.width = p + "%";
+      pct.textContent = p + "%";
+    }
+    checksWrap.addEventListener("change", updateProgress);
+    updateProgress();
+
+    // ---------- Breath timer (60s): Inhale 4, Hold 2, Exhale 6
+    const breathState = document.getElementById("breathState");
+    const breathTimer = document.getElementById("breathTimer");
+    const breathHint = document.getElementById("breathHint");
+    const breathStart = document.getElementById("breathStart");
+    const breathReset = document.getElementById("breathReset");
+
+    let breathInterval = null;
+    let totalLeft = 60;
+    let phase = "ready";
+    let phaseLeft = 0;
+
+    function setBreathUI(){
+      breathTimer.textContent = "00:" + pad(totalLeft);
+      if (phase === "ready"){
+        breathState.textContent = "Pronto";
+        breathHint.textContent = "Premi Start. Segui: Inspira 4 • Trattieni 2 • Espira 6.";
+      } else if (phase === "inhale"){
+        breathState.textContent = "Inspira…";
+        breathHint.textContent = "Aisha.";
+      } else if (phase === "hold"){
+        breathState.textContent = "Trattieni…";
+        breathHint.textContent = "";
+      } else if (phase === "exhale"){
+        breathState.textContent = "Espira…";
+        breathHint.textContent = "";
+      } else if (phase === "done"){
+        breathState.textContent = "Finito ✅";
+        breathHint.textContent = "Perfetto. Ora: scegli una cosa e falla partire.";
+      }
+    }
+
+    function resetBreath(){
+      clearInterval(breathInterval);
+      breathInterval = null;
+      totalLeft = 60;
+      phase = "ready";
+      phaseLeft = 0;
+      breathStart.textContent = "▶ Start";
+      setBreathUI();
+    }
+
+    function nextPhase(){
+      if (totalLeft <= 0){
+        phase = "done";
+        clearInterval(breathInterval);
+        breathInterval = null;
+        breathStart.textContent = "▶ Start";
+        showToast("Respiro completato 🌿");
+        setBreathUI();
+        return;
+      }
+
+      if (phase === "ready" || phase === "exhale"){
+        phase = "inhale"; phaseLeft = 4;
+      } else if (phase === "inhale"){
+        phase = "hold"; phaseLeft = 2;
+      } else if (phase === "hold"){
+        phase = "exhale"; phaseLeft = 6;
+      }
+      setBreathUI();
+    }
+
+    function tickBreath(){
+      totalLeft--;
+      phaseLeft--;
+
+      breathTimer.textContent = "00:" + pad(Math.max(totalLeft,0));
+
+      if (phaseLeft <= 0){
+        nextPhase();
+      }
+      if (totalLeft <= 0){
+        nextPhase();
+      }
+    }
+
+    breathStart.addEventListener("click", () => {
+      if (breathInterval){
+        clearInterval(breathInterval);
+        breathInterval = null;
+        breathStart.textContent = "▶ Riprendi";
+        showToast("Pausa");
+        return;
+      }
+
+      if (phase === "done") resetBreath();
+      if (phase === "ready") nextPhase();
+      breathStart.textContent = "⏸ Pausa";
+
+      breathInterval = setInterval(tickBreath, 1000);
+      showToast("Vai 🌿");
     });
 
-    // Light toggle (exposure)
-    let bright = true;
-    btnLight.addEventListener("click", () => {
-      bright = !bright;
-      mv.setAttribute("exposure", bright ? "1.1" : "0.85");
-      showToast(bright ? "Light +" : "Light -");
+    breathReset.addEventListener("click", () => {
+      resetBreath();
+      showToast("Reset");
     });
 
-    // Screenshot (download png)
-    btnSnap.addEventListener("click", async () => {
+    setBreathUI();
+
+    // ---------- Local save/load (intent + gratitude + checks)
+    const intention = document.getElementById("intention");
+    const gratitude = document.getElementById("gratitude");
+
+    const KEY = "morning_page_state_v1";
+
+    function getState(){
+      const boxes = Array.from(checksWrap.querySelectorAll('input[type="checkbox"]')).map(b => b.checked);
+      return {
+        intention: intention.value || "",
+        gratitude: gratitude.value || "",
+        checks: boxes
+      };
+    }
+
+    function setState(s){
+      intention.value = s?.intention ?? "";
+      gratitude.value = s?.gratitude ?? "";
+      const boxes = checksWrap.querySelectorAll('input[type="checkbox"]');
+      (s?.checks ?? []).forEach((v, i) => { if (boxes[i]) boxes[i].checked = !!v; });
+      updateProgress();
+    }
+
+    document.getElementById("saveLocal").addEventListener("click", () => {
       try{
-        const blob = await mv.toBlob({ idealAspect: true });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "daily-drop.png";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        showToast("Screenshot salvato 📸");
+        localStorage.setItem(KEY, JSON.stringify(getState()));
+        showToast("Salvato 💾");
       }catch(e){
-        showToast("Screenshot non supportato");
+        showToast("Non posso salvare");
       }
     });
+
+    document.getElementById("loadLocal").addEventListener("click", () => {
+      try{
+        const raw = localStorage.getItem(KEY);
+        if (!raw){ showToast("Niente da caricare"); return; }
+        setState(JSON.parse(raw));
+        showToast("Caricato 📂");
+      }catch(e){
+        showToast("Errore di caricamento");
+      }
+    });
+
+    // Auto-load on open
+    try{
+      const raw = localStorage.getItem(KEY);
+      if (raw) setState(JSON.parse(raw));
+    }catch(e){}
   </script>
 </body>
 </html>
