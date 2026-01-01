@@ -1,10 +1,8 @@
 name: Daily Email
 
 on:
-  # ⚠️ prima avevi "* * * * *" = ogni minuto (spam + caos)
-  # Metti una volta al giorno. Esempio: 07:00 UTC (08:00 CET in inverno)
   schedule:
-    - cron: "* * * * *"
+    - cron: "* * * * *" # ogni minuto
   workflow_dispatch:
 
 permissions:
@@ -30,25 +28,38 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # Carica tutte le variabili dal secret EMAIL_DATA (righe KEY=VALUE)
-      - name: Load EMAIL_DATA into env
-        run: |
-          if [ -z "${{ secrets.EMAIL_DATA }}" ]; then
-            echo "Missing secret: EMAIL_DATA"
-            exit 1
-          fi
-          printf "%s\n" "${{ secrets.EMAIL_DATA }}" >> "$GITHUB_ENV"
-
-      # Debug sicuro: stampa solo se le chiavi esistono (non stampa valori)
-      - name: Sanity check (safe)
+      - name: Parse EMAIL_DATA + sanity check + send (bulletproof)
+        shell: bash
+        env:
+          EMAIL_DATA: ${{ secrets.EMAIL_DATA }}
         run: |
           python - <<'PY'
-          import os
+          import os, sys, subprocess
 
+          data = os.getenv("EMAIL_DATA", "")
+          if not data.strip():
+              raise SystemExit("Missing secret: EMAIL_DATA (empty or not set)")
+
+          # Parse: solo righe KEY=VALUE, ignora vuote/commenti
+          for i, raw in enumerate(data.splitlines(), start=1):
+              line = raw.strip().replace("\r", "")
+              if not line or line.startswith("#"):
+                  continue
+              if "=" not in line:
+                  raise SystemExit(f"EMAIL_DATA invalid at line {i}: missing '='")
+              key, val = line.split("=", 1)
+              key = key.strip()
+              val = val.strip()
+              if not key:
+                  raise SystemExit(f"EMAIL_DATA invalid at line {i}: empty key")
+              os.environ[key] = val
+
+          # Sanity check
           must = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D", "IMG_PREVIEW"]
           missing = [k for k in must if not os.getenv(k)]
 
@@ -61,35 +72,26 @@ jobs:
           if missing:
               raise SystemExit(f"Missing env vars: {missing}")
 
-          # controlla che IMG_PREVIEW sia un URL pubblico
+          # IMG_PREVIEW deve essere un URL pubblico
           img = os.getenv("IMG_PREVIEW", "")
           if not (img.startswith("https://") or img.startswith("cid:")):
               raise SystemExit("IMG_PREVIEW must be an https:// URL (GitHub Pages) or cid:... (inline).")
 
-          print("OK: env vars look good.")
+          # Il tuo script usa .format(admin=...), quindi nel subject usa {admin} se metti placeholder
+          subj = os.getenv("EMAIL_SUBJECT", "")
+          if "{ADMIN}" in subj:
+              raise SystemExit("EMAIL_SUBJECT contains {ADMIN}. Use {admin} (lowercase).")
+
+          # Check template file (se usi EMAIL_BODY_FILE)
+          body_file = os.getenv("EMAIL_BODY_FILE", "").strip()
+          if body_file and not os.path.isfile(body_file):
+              raise SystemExit(f"Template file not found: {body_file}")
+
+          # Check script exists
+          script = "email.addresser/email.addresser.py"
+          if not os.path.isfile(script):
+              raise SystemExit(f"Missing script: {script}")
+
+          print("OK: env parsed + checks passed. Sending...")
+          subprocess.run([sys.executable, script], check=True, env=os.environ)
           PY
-
-      # Controllo file template (se usi EMAIL_BODY_FILE)
-      - name: Check template file exists (if using EMAIL_BODY_FILE)
-        run: |
-          if [ -n "${EMAIL_BODY_FILE}" ]; then
-            echo "EMAIL_BODY_FILE=${EMAIL_BODY_FILE}"
-            if [ ! -f "${EMAIL_BODY_FILE}" ]; then
-              echo "Template file not found: ${EMAIL_BODY_FILE}"
-              echo "Repo files (maxdepth 3):"
-              find . -maxdepth 3 -type f
-              exit 1
-            fi
-            echo "Template OK"
-          else
-            echo "EMAIL_BODY_FILE not set (using EMAIL_BODY inline)"
-          fi
-
-      # Controllo path script (evita errori stupidi)
-      - name: Check script exists
-        run: |
-          test -f email.addresser/email.addresser.py || (echo "Missing script: email.addresser/email.addresser.py" && find . -maxdepth 4 -type f && exit 1)
-          echo "Script OK"
-
-      - name: Send email
-        run: python email.addresser/email.addresser.py
