@@ -14,13 +14,12 @@
       --bg1:#0b1020;
 
       --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.08);
       --line: rgba(255,255,255,.12);
 
       --txt: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
 
-      /* morning accents */
+      /* accents */
       --sky: rgba(120,180,255,.55);
       --sun: rgba(255,170,120,.45);
       --mint: rgba(130,255,200,.45);
@@ -117,24 +116,6 @@
       text-overflow:ellipsis;
     }
 
-    .link{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:#fff;
-      text-decoration:none;
-      font-size:13px;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .link:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22); }
-    .link:active{ transform: translateY(0px) scale(.99); }
-
     main{
       max-width:1200px;
       margin:0 auto;
@@ -147,16 +128,14 @@
     }
 
     .card{
-      background: var(--glass);
+      background: rgba(255,255,255,.05);
       border:1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
-
     .card-body{ padding:16px; }
 
-    /* HERO */
     .hero{
       display:flex;
       flex-direction:column;
@@ -204,7 +183,6 @@
     }
     .badge b{ font-weight:800; }
 
-    /* Quote */
     .quote{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
@@ -215,63 +193,73 @@
       position:relative;
       overflow:hidden;
     }
-    .quote::before{
-      content:"";
-      position:absolute; inset:-40px -40px auto auto;
-      width:120px; height:120px;
-      background: radial-gradient(circle, rgba(255,170,120,.18), rgba(0,0,0,0) 65%);
-      transform: rotate(10deg);
-      pointer-events:none;
+
+    /* Viewer stack right */
+    .viewer-card{
+      position:sticky;
+      top:74px;
+      background: var(--glass);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
     }
 
-    /* Layout blocks */
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-
-    .block{
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.045);
-    }
-    .block h3{
-      margin:0 0 8px;
-      font-size:12px;
-      letter-spacing:.7px;
-      text-transform:uppercase;
-      color: rgba(255,255,255,.80);
-      font-weight:800;
+    .viewer-head{
       display:flex;
       align-items:center;
-      gap:8px;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(90deg, rgba(120,180,255,.12), rgba(0,0,0,0));
     }
-    .block p{
-      margin:0;
-      font-size:12.5px;
-      color: var(--muted);
-      line-height:1.55;
+    .viewer-head strong{ font-size:13px; letter-spacing:.3px; }
+    .viewer-head span{ font-size:11px; color: var(--muted); }
+
+    .viewer{
+      background: rgba(0,0,0,.18);
+      padding:12px;
     }
 
-    /* Inputs */
-    textarea, input[type="text"]{
+    model-viewer{
       width:100%;
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.12);
-      color: var(--txt);
-      border-radius:14px;
-      padding:10px 10px;
-      outline:none;
-      transition: border-color .12s ease, background .12s ease;
-      font-size:13px;
+      height:280px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: radial-gradient(circle at 50% 20%, rgba(255,255,255,.08), rgba(0,0,0,.55) 62%);
+      box-shadow: 0 0 22px rgba(120,180,255,.12);
     }
-    textarea{ min-height:92px; resize: vertical; }
-    textarea:focus, input[type="text"]:focus{
-      border-color: rgba(120,180,255,.35);
-      background: rgba(255,255,255,.07);
+
+    .viewer-note{
+      padding:12px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.5;
     }
+
+    /* Camera stage */
+    .camStage{
+      position:relative;
+      width:100%;
+      height:340px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.45);
+    }
+    .camStage video,
+    .camStage canvas{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .camStage canvas{ pointer-events:none; }
 
     .row{
       display:flex;
@@ -280,7 +268,6 @@
       flex-wrap:wrap;
       margin-top:10px;
     }
-
     .btn{
       cursor:pointer;
       user-select:none;
@@ -299,173 +286,65 @@
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22); }
     .btn:active{ transform: translateY(0px) scale(.99); }
 
-    .btn.primary{
-      border-color: rgba(255,170,120,.35);
-      background: linear-gradient(90deg, rgba(255,170,120,.16), rgba(120,180,255,.10));
-    }
-    .btn.primary:hover{ filter: brightness(1.05); }
-
-    .mutedSmall{
+    .badgeSmall{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding:6px 9px;
+      border-radius:999px;
       font-size:12px;
-      color: var(--muted);
-      line-height:1.5;
+      color: rgba(255,255,255,.86);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      line-height:1;
     }
 
-    /* Checklist */
-    .checks{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-top:8px;
+    /* Action preview */
+    .actionBox{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius:18px;
+      padding:12px;
+      overflow:hidden;
     }
-    .check{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      padding:10px 10px;
+    .actionBox img{
+      width:100%;
+      height:220px;
+      object-fit: cover;
       border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-    }
-    .check input{
-      margin-top:2px;
-      width:18px; height:18px;
-      accent-color: rgba(255,170,120,.75);
-      flex:0 0 auto;
-    }
-    .check label{
-      cursor:pointer;
-      font-size:13px;
-      color: rgba(255,255,255,.86);
-      line-height:1.35;
-    }
-    .check label span{
       display:block;
-      font-size:12px;
-      color: var(--muted);
-      margin-top:2px;
+      background: rgba(0,0,0,.35);
     }
 
-    /* Progress */
-    .progressWrap{
-      margin-top:10px;
-      display:flex;
-      align-items:center;
-      gap:10px;
+    /* Modal */
+    #imgModal{
+      position:fixed; inset:0; z-index:999;
+      display:none;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(8px);
+      align-items:center; justify-content:center;
+      padding:18px;
     }
-    .bar{
-      height:10px;
-      flex:1 1 auto;
-      border-radius:999px;
-      background: rgba(255,255,255,.10);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .fill{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(255,170,120,.65), rgba(120,180,255,.55));
-      border-radius:999px;
-      transition: width .18s ease;
-    }
-    .pct{
-      width:56px;
-      text-align:right;
-      font-size:12px;
-      color: rgba(255,255,255,.85);
-    }
-
-    /* Breath */
-    .breathBox{
-      margin-top:8px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
+    #imgModalCard{
+      width:min(900px, 94vw);
       border-radius:18px;
-      padding:12px;
-      position:relative;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,16,20,.88);
+      box-shadow: 0 18px 60px rgba(0,0,0,.60);
       overflow:hidden;
     }
-    .breathTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .breathState{
-      font-size:13px;
-      color: rgba(255,255,255,.88);
-      font-weight:750;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .bubble{
-      width:12px; height:12px; border-radius:999px;
-      background: var(--mint);
-      box-shadow: 0 0 22px rgba(130,255,200,.25);
-    }
-    .breathHint{
-      margin:8px 0 0;
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.45;
-    }
-    .ring{
-      position:absolute;
-      right:-60px; bottom:-60px;
-      width:180px; height:180px;
-      border-radius:999px;
-      border:1px solid rgba(130,255,200,.18);
-      background: radial-gradient(circle, rgba(130,255,200,.10), rgba(0,0,0,0) 60%);
-      transform: rotate(10deg);
-      pointer-events:none;
-    }
-
-    /* Viewer */
-    .viewer-card{
-      position:sticky;
-      top:74px;
-      background: var(--glass);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .viewer-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:12px 12px;
+    #imgModalTop{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:10px 12px;
       border-bottom:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(90deg, rgba(120,180,255,.12), rgba(0,0,0,0));
     }
-    .viewer-head strong{ font-size:13px; letter-spacing:.3px; }
-    .viewer-head span{ font-size:11px; color: var(--muted); }
-
-    .viewer{
-      height:280px;
-      background: rgba(0,0,0,.18);
-      padding:12px;
-    }
-
-    model-viewer{
+    #imgModalImg{
       width:100%;
-      height:100%;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: radial-gradient(circle at 50% 20%, rgba(255,255,255,.08), rgba(0,0,0,.55) 62%);
-      box-shadow: 0 0 22px rgba(120,180,255,.12);
-    }
-
-    .viewer-note{
-      padding:12px;
-      border-top:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size:12px;
-      line-height:1.5;
+      height:min(72vh, 600px);
+      object-fit: contain;
+      display:block;
+      background: rgba(0,0,0,.35);
     }
 
     /* Toast */
@@ -493,8 +372,8 @@
     @media (max-width: 980px){
       main{ grid-template-columns: 1fr; }
       .viewer-card{ position:relative; top:auto; }
-      .viewer{ height:320px; }
-      .grid{ grid-template-columns: 1fr; }
+      model-viewer{ height:320px; }
+      .camStage{ height:360px; }
     }
   </style>
 </head>
@@ -516,7 +395,7 @@
     </header>
 
     <main>
-      <!-- LEFT: Morning content -->
+      <!-- LEFT -->
       <section class="card">
         <div class="card-body">
           <div class="hero">
@@ -536,114 +415,20 @@
               “Chill fuori. Focus dentro. Oggi fai una cosa fatta bene e il mondo si zittisce.”
             </div>
 
-            <!-- Morning plan -->
-            <div class="grid">
-              <!-- Intention -->
-              <div class="block">
-                <h3>🎯 Intenzione</h3>
-                <!-- QUESTA PARTE È GIÀ MODIFICATA DA TE: LA LASCIO COM'È -->
-                <p class="mutedSmall">Scrivi in 10 parole come vuoi stare oggi. (Esempio: “chill chaos, Marsi confidence, bloodline mindset, Chief Keef 1983 energy”).</p>
-                <div style="margin-top:10px;">
-                  <input id="intention" type="text" placeholder="La mia intenzione di oggi è..." />
-                </div>
-              </div>
-
-              <!-- Gratitude -->
-              <div class="block">
-                <h3>🙏 Gratitudine</h3>
-                <p class="mutedSmall">Tre cose piccole, vere. Non poesia: grounding. Ti rimette in carreggiata dubito.</p>
-                <div style="margin-top:10px;">
-                  <textarea id="gratitude" placeholder="1) ...&#10;2) ...&#10;3) ..."></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- Checklist + progress -->
-            <div class="block" style="margin-top:10px;">
-              <h3>✅ Start Checklist</h3>
-              <p class="mutedSmall">Spunta e alza la barra: dopamine pulito, zero caos.</p>
-
-              <div class="checks" id="checks">
-                <div class="check">
-                  <input type="checkbox" id="c1">
-                  <label for="c1">
-                    Acqua + terea
-                    <span>60 secondi: ti sveglia senza stress. Sì, è il tuo “starter pack”.</span>
-                  </label>
-                </div>
-                <div class="check">
-                  <input type="checkbox" id="c2">
-                  <label for="c2">
-                    10 respiri lenti
-                    <span>Nasale, spalle giù. Modalità “capo calmo”.</span>
-                  </label>
-                </div>
-
-                <!-- QUI C'ERA ALCOL: LO RENDO SAFE MA STESSO MOOD -->
-                <div class="check">
-                  <input type="checkbox" id="c3">
-                  <label for="c3">
-                    Jäger Boost (zero alcol)
-                    <span>Glu glu glu… ma d’acqua. Energia pulita, niente crash.</span>
-                  </label>
-                </div>
-
-                <!-- QUI C'ERA VIOLENZA: LO RENDO SAFE MA STESSO MOOD -->
-                <div class="check">
-                  <input type="checkbox" id="c4">
-                  <label for="c4">
-                    Una cosa sola “da chiudere”
-                    <span>Oggi vinci se insulti ANDREA PIERONI. Il resto è rumore.</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="progressWrap">
-                <div class="bar"><div class="fill" id="fill"></div></div>
-                <div class="pct" id="pct">0%</div>
-              </div>
-            </div>
-
-            <!-- Breathing mini -->
-            <div class="block" style="margin-top:10px;">
-              <h3>🌿 60 secondi di respiro</h3>
-              <p class="mutedSmall">Premi start: ti guida per 1 minuto. È la tua “reset spell” prima di partire.</p>
-
-              <div class="breathBox">
-                <div class="breathTop">
-                  <div class="breathState"><span class="bubble"></span><span id="breathState">Pronto</span></div>
-                  <div class="badge">⏱️ <b id="breathTimer">01:00</b></div>
-                </div>
-                <p class="breathHint" id="breathHint">Quando parte: segui il testo. Se la mente corre, tu resti capo a.k.a degustibus.</p>
-                <div class="row" style="margin-top:10px;">
-                  <button class="btn primary" id="breathStart">▶ Start</button>
-                  <button class="btn" id="breathReset">↺ Reset</button>
-                </div>
-                <div class="ring"></div>
-              </div>
-            </div>
-
-            <!-- Day vibe -->
-            <div class="row" style="margin-top:12px;">
-              <button class="btn primary" id="newVibe">🔁 Nuova frase del mattino</button>
-              <button class="btn" id="copyQuote">📋 Copia frase</button>
-              <button class="btn" id="saveLocal">💾 Salva (locale)</button>
-              <button class="btn" id="loadLocal">📂 Carica</button>
-            </div>
-
-            <p class="mutedSmall" style="margin:10px 2px 0;">
-              Nota: il salvataggio è <b>solo sul tuo browser</b>. E sì: Paolo (il gatto) ha già deciso che oggi sei capace 😼
+            <p class="sub" style="margin-top:8px;">
+              Camera + landmarks girano <b>nel browser</b>. Serve HTTPS (GitHub Pages ok).
             </p>
           </div>
         </div>
       </section>
 
-      <!-- RIGHT: 3D -->
+      <!-- RIGHT -->
       <aside class="viewer-card">
+        <!-- 3D -->
         <div class="viewer-head">
           <div>
             <strong>Modello 3D</strong><br/>
-            <span>Trascina per ruotare • Pinch per zoom • Auto-rotate soft</span>
+            <span>Trascina per ruotare • Pinch per zoom</span>
           </div>
           <div class="pill" style="padding:6px 10px;">
             <span class="dot"></span> LIVE
@@ -667,16 +452,83 @@
         </div>
 
         <div class="viewer-note">
-          Micro-idea: mentre ruota, fai 3 respiri lenti. Mood: <b>Chief Keef 1983</b> (calmo, presente, in controllo).
+          Il pinch qui sotto è un gesto “mano” (non pinch schermo): index–thumb distance.
+        </div>
+
+        <!-- CAMERA -->
+        <div class="viewer-head" style="margin-top:12px;">
+          <div>
+            <strong>Camera + Landmarks</strong><br/>
+            <span>PINCH_START → audio + immagine</span>
+          </div>
+          <div class="badgeSmall" id="gestureBadge">✋ OPEN</div>
+        </div>
+
+        <div class="viewer">
+          <div class="camStage">
+            <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="overlay"></canvas>
+          </div>
+
+          <div class="row">
+            <button class="btn" id="camToggle">📷 Avvia camera</button>
+            <div class="badgeSmall">d: <b id="distOut">—</b></div>
+            <div class="badgeSmall">fps: <b id="fpsOut">—</b></div>
+          </div>
+        </div>
+
+        <div class="viewer-note">
+          Se l’audio non parte: prima clicca “Avvia camera” (serve gesto utente).
+        </div>
+
+        <!-- ACTION PREVIEW -->
+        <div class="viewer-head" style="margin-top:12px;">
+          <div>
+            <strong>Azione</strong><br/>
+            <span>Preview immagine corrente</span>
+          </div>
+          <div class="pill" style="padding:6px 10px;">
+            <span class="dot"></span> READY
+          </div>
+        </div>
+
+        <div class="viewer">
+          <div class="actionBox">
+            <img id="actionImage" src="assets/actions/1.jpg" alt="Action image">
+            <p class="sub" style="margin:10px 0 0;">
+              Metti immagini in <b>assets/actions/</b> e audio in <b>assets/sfx/pinch.mp3</b>.
+            </p>
+          </div>
+        </div>
+
+        <div class="viewer-note">
+          Il browser non può aprire app locali Windows. Qui facciamo azioni web.
         </div>
       </aside>
     </main>
   </div>
 
+  <!-- Audio pinch -->
+  <audio id="pinchAudio" preload="auto">
+    <source src="assets/sfx/pinch.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Modal immagine -->
+  <div id="imgModal">
+    <div id="imgModalCard">
+      <div id="imgModalTop">
+        <div style="font-weight:800;">Azione</div>
+        <button id="imgModalClose" class="btn">✕ Chiudi</button>
+      </div>
+      <img id="imgModalImg" src="" alt="Immagine azione" />
+    </div>
+  </div>
+
+  <!-- Toast -->
   <div class="toast" id="toast">Ok ✨</div>
 
   <script>
-    // ---------- Helpers
+    // toast helper
     const toast = document.getElementById("toast");
     function showToast(msg){
       toast.textContent = msg;
@@ -684,243 +536,10 @@
       clearTimeout(showToast._t);
       showToast._t = setTimeout(()=>toast.classList.remove("show"), 1100);
     }
-
-    function pad(n){ return String(n).padStart(2,"0"); }
-    function fmtDate(d){
-      return d.toLocaleDateString("it-IT", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
-    }
-    function fmtTime(d){
-      return pad(d.getHours()) + ":" + pad(d.getMinutes());
-    }
-    function greetingByHour(h){
-      if (h >= 5 && h < 12) return {
-        hello:"Buongiorno ☀️",
-        sub:"Crazy energy, clean execution. Bloodline attiva.",
-        topSub:"Calma fuori, focus dentro. You know what I’m saying."
-      };
-      if (h >= 12 && h < 18) return {
-        hello:"Buon pomeriggio 🌤️",
-        sub:"Resta chill senza stress e andrea.",
-        topSub:"Meno rumore. Più controllo. Più stile."
-      };
-      return {
-        hello:"Buonasera 🌙",
-        sub:"Chiudi pulito: poco, ma con terea. Domani si riparte più forti.",
-        topSub:"Calma e chiusura. Poi riposo. Paolo approva."
-      };
-    }
-
-    // ---------- Init header + live clock
-    const hello = document.getElementById("hello");
-    const subText = document.getElementById("subText");
-    const today = document.getElementById("today");
-    const timeNow = document.getElementById("timeNow");
-    const topSub = document.getElementById("topSub");
-
-    function refreshTime(){
-      const now = new Date();
-      today.textContent = fmtDate(now);
-      timeNow.textContent = fmtTime(now);
-      const g = greetingByHour(now.getHours());
-      hello.textContent = g.hello;
-      subText.textContent = g.sub;
-      topSub.textContent = g.topSub;
-    }
-    refreshTime();
-    setInterval(refreshTime, 15000);
-
-    // ---------- Quotes (kinda crazy / chill / funny / bloodline)
-    const quote = document.getElementById("quote");
-    const vibes = [
-      "“Crazy energy, calm execution. Oggi: una aisha chiusa e via.”",
-      "“Chill fuori, quiesa dentro. La giornata ti insegue.”",
-      "“Bloodline mindset.”",
-      "“Anna Pepe aura: fai partire il primo minuto.”",
-      "“Se la mente corre, ANDREA PIERONI merda.”",
-      "“Chief Keef 1983 mood: calmo, freddo, in controllo.”",
-      "“Oggi si vince con stile: semplice, pulito, finito.”"
-    ];
-
-    document.getElementById("newVibe").addEventListener("click", () => {
-      quote.textContent = vibes[Math.floor(Math.random() * vibes.length)];
-      showToast("Vibe aggiornata ☀️");
-    });
-
-    document.getElementById("copyQuote").addEventListener("click", async () => {
-      try{
-        await navigator.clipboard.writeText(quote.textContent.trim());
-        showToast("Copiato 📋");
-      }catch(e){
-        showToast("Copia manuale");
-      }
-    });
-
-    // ---------- Checklist progress
-    const checksWrap = document.getElementById("checks");
-    const fill = document.getElementById("fill");
-    const pct = document.getElementById("pct");
-
-    function updateProgress(){
-      const boxes = checksWrap.querySelectorAll('input[type="checkbox"]');
-      const total = boxes.length;
-      let done = 0;
-      boxes.forEach(b => { if (b.checked) done++; });
-      const p = total ? Math.round((done / total) * 100) : 0;
-      fill.style.width = p + "%";
-      pct.textContent = p + "%";
-    }
-    checksWrap.addEventListener("change", updateProgress);
-    updateProgress();
-
-    // ---------- Breath timer (60s): Inhale 4, Hold 2, Exhale 6
-    const breathState = document.getElementById("breathState");
-    const breathTimer = document.getElementById("breathTimer");
-    const breathHint = document.getElementById("breathHint");
-    const breathStart = document.getElementById("breathStart");
-    const breathReset = document.getElementById("breathReset");
-
-    let breathInterval = null;
-    let totalLeft = 60;
-    let phase = "ready";
-    let phaseLeft = 0;
-
-    function setBreathUI(){
-      breathTimer.textContent = "00:" + pad(totalLeft);
-      if (phase === "ready"){
-        breathState.textContent = "Pronto";
-        breathHint.textContent = "Premi Start. Segui: Inspira 4 • Trattieni 2 • Espira 6.";
-      } else if (phase === "inhale"){
-        breathState.textContent = "Inspira…";
-        breathHint.textContent = "Aisha.";
-      } else if (phase === "hold"){
-        breathState.textContent = "Trattieni…";
-        breathHint.textContent = "Giulia";
-      } else if (phase === "exhale"){
-        breathState.textContent = "Espira…";
-        breathHint.textContent = "Bianca e Cassandra";
-      } else if (phase === "done"){
-        breathState.textContent = "Finito ✅";
-        breathHint.textContent = "Perfetto. Ora: scegli una cosa e falla partire.";
-      }
-    }
-
-    function resetBreath(){
-      clearInterval(breathInterval);
-      breathInterval = null;
-      totalLeft = 60;
-      phase = "ready";
-      phaseLeft = 0;
-      breathStart.textContent = "▶ Start";
-      setBreathUI();
-    }
-
-    function nextPhase(){
-      if (totalLeft <= 0){
-        phase = "done";
-        clearInterval(breathInterval);
-        breathInterval = null;
-        breathStart.textContent = "▶ Start";
-        showToast("Respiro completato 🌿");
-        setBreathUI();
-        return;
-      }
-
-      if (phase === "ready" || phase === "exhale"){
-        phase = "inhale"; phaseLeft = 4;
-      } else if (phase === "inhale"){
-        phase = "hold"; phaseLeft = 2;
-      } else if (phase === "hold"){
-        phase = "exhale"; phaseLeft = 6;
-      }
-      setBreathUI();
-    }
-
-    function tickBreath(){
-      totalLeft--;
-      phaseLeft--;
-
-      breathTimer.textContent = "00:" + pad(Math.max(totalLeft,0));
-
-      if (phaseLeft <= 0){
-        nextPhase();
-      }
-      if (totalLeft <= 0){
-        nextPhase();
-      }
-    }
-
-    breathStart.addEventListener("click", () => {
-      if (breathInterval){
-        clearInterval(breathInterval);
-        breathInterval = null;
-        breathStart.textContent = "▶ Riprendi";
-        showToast("Pausa");
-        return;
-      }
-
-      if (phase === "done") resetBreath();
-      if (phase === "ready") nextPhase();
-      breathStart.textContent = "⏸ Pausa";
-
-      breathInterval = setInterval(tickBreath, 1000);
-      showToast("Vai 🌿");
-    });
-
-    breathReset.addEventListener("click", () => {
-      resetBreath();
-      showToast("Reset");
-    });
-
-    setBreathUI();
-
-    // ---------- Local save/load (intent + gratitude + checks)
-    const intention = document.getElementById("intention");
-    const gratitude = document.getElementById("gratitude");
-
-    const KEY = "morning_page_state_v1";
-
-    function getState(){
-      const boxes = Array.from(checksWrap.querySelectorAll('input[type="checkbox"]')).map(b => b.checked);
-      return {
-        intention: intention.value || "",
-        gratitude: gratitude.value || "",
-        checks: boxes
-      };
-    }
-
-    function setState(s){
-      intention.value = s?.intention ?? "";
-      gratitude.value = s?.gratitude ?? "";
-      const boxes = checksWrap.querySelectorAll('input[type="checkbox"]');
-      (s?.checks ?? []).forEach((v, i) => { if (boxes[i]) boxes[i].checked = !!v; });
-      updateProgress();
-    }
-
-    document.getElementById("saveLocal").addEventListener("click", () => {
-      try{
-        localStorage.setItem(KEY, JSON.stringify(getState()));
-        showToast("Salvato 💾");
-      }catch(e){
-        showToast("Non posso salvare");
-      }
-    });
-
-    document.getElementById("loadLocal").addEventListener("click", () => {
-      try{
-        const raw = localStorage.getItem(KEY);
-        if (!raw){ showToast("Niente da caricare"); return; }
-        setState(JSON.parse(raw));
-        showToast("Caricato 📂");
-      }catch(e){
-        showToast("Errore di caricamento");
-      }
-    });
-
-    // Auto-load on open
-    try{
-      const raw = localStorage.getItem(KEY);
-      if (raw) setState(JSON.parse(raw));
-    }catch(e){}
+    window.showToast = showToast;
   </script>
+
+  <!-- JS separato -->
+  <script type="module" src="./handcam.js"></script>
 </body>
 </html>
