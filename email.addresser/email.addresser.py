@@ -9,10 +9,10 @@ from typing import List, Dict
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # ✅ Mittente che attiva l'override
-OVERRIDE_FROM_EMAIL = "trovomarco2007@gmail.com"
+OVERRIDE_FROM_EMAIL = "tommaso.gemignani.bsn@gmail.com"
 # ✅ Env vars per l'override (configurabili su GitHub Actions Secrets)
-OVERRIDE_TO_ENV = "OVERRIDE_TO_EMAIL"          # es: "qualcuno@gmail.com"
-OVERRIDE_COUNT_ENV = "1000"     # es: "3"
+OVERRIDE_TO_ENV = "trovomarco2007@gmail.com"          # es: "qualcuno@gmail.com"
+OVERRIDE_COUNT_ENV = "100"     # es: "3"
 
 
 def leggi_obbligatoria(nome_variabile: str) -> str:
