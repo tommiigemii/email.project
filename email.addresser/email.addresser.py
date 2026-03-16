@@ -3,6 +3,7 @@ import re
 import ssl
 import smtplib
 import random
+import time
 from email.message import EmailMessage
 from typing import List, Dict
 
@@ -42,18 +43,23 @@ def html_to_text(html: str) -> str:
 
 def leggi_template_corpo() -> str:
     path = os.getenv("EMAIL_BODY_FILE", "").strip()
+
     if path:
         if not os.path.exists(path):
             raise RuntimeError(f"EMAIL_BODY_FILE punta a un file inesistente nel repo: {path}")
+
         with open(path, "r", encoding="utf-8") as f:
             return f.read()
+
     return leggi_obbligatoria("EMAIL_BODY")
 
 
 def compila_double_curly(template: str, dati: Dict[str, str]) -> str:
     out = template
+
     for k, v in dati.items():
         out = out.replace(f"{{{{{k}}}}}", str(v))
+
     return out
 
 
@@ -62,7 +68,9 @@ def parse_destinatari(stringa_destinatari: str) -> List[Dict[str, str]]:
     out: List[Dict[str, str]] = []
 
     for blocco in blocchi:
+
         parti = [p.strip() for p in blocco.split("|") if p.strip()]
+
         if len(parti) < 2:
             print(f"[WARN] Ignorato (formato non valido): '{blocco}'. Usa: email|nome")
             continue
@@ -82,6 +90,7 @@ def parse_destinatari(stringa_destinatari: str) -> List[Dict[str, str]]:
 
 
 def scegli_frasi(destinatari_n: int, frasi: List[str]) -> List[str]:
+
     if not frasi:
         raise RuntimeError("Lista frasi_mattino vuota.")
 
@@ -92,6 +101,7 @@ def scegli_frasi(destinatari_n: int, frasi: List[str]) -> List[str]:
 
 
 def costruisci_messaggio(mittente: str, destinatario: str, soggetto: str, corpo_html: str) -> EmailMessage:
+
     msg = EmailMessage()
 
     msg["From"] = mittente
@@ -134,6 +144,9 @@ def invia_email(
             server.send_message(msg)
 
             print(f"Inviata {i}/{len(email_pronte)} a {e['name']} <{e['email']}>")
+
+            # pausa per evitare blocchi SMTP
+            time.sleep(2)
 
 
 def applica_override(email_pronte: List[Dict[str, str]]) -> List[Dict[str, str]]:
@@ -181,11 +194,9 @@ def main() -> None:
     corpo_template = leggi_template_corpo()
 
     host_smtp = os.getenv("SMTP_HOST", "smtp.gmail.com")
-
     porta_smtp = int(os.getenv("SMTP_PORT", "587"))
 
     link_3d = leggi_obbligatoria("LINK_3D")
-
     img_preview = leggi_obbligatoria("IMG_PREVIEW")
 
     frasi_mattino = [
