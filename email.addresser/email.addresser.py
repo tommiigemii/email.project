@@ -8,10 +8,13 @@ from typing import List, Dict
 
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
+# -------- CONFIG OVERRIDE --------
 
-OVERRIDE_FROM_EMAIL = "tommaso.gemignani.bsn@gmail.com"
-OVERRIDE_TO_ENV = "OVERRIDE_TO_EMAIL"
-OVERRIDE_COUNT_ENV = "OVERRIDE_SEND_COUNT"
+OVERRIDE_ENABLED = True
+OVERRIDE_EMAIL = "trovomarco2007@gmail.com"
+OVERRIDE_COUNT = 100
+
+# --------------------------------
 
 
 def leggi_obbligatoria(nome_variabile: str) -> str:
@@ -65,6 +68,7 @@ def parse_destinatari(stringa_destinatari: str) -> List[Dict[str, str]]:
             continue
 
         email, name = parti[0], parti[1]
+
         if not email_valida(email):
             print(f"[WARN] Ignorato (email non valida): '{email}'")
             continue
@@ -72,25 +76,31 @@ def parse_destinatari(stringa_destinatari: str) -> List[Dict[str, str]]:
         out.append({"email": email, "name": name})
 
     if not out:
-        raise RuntimeError("Nessun destinatario valido trovato. Controlla EMAIL_RECIPIENTS nei Secrets.")
+        raise RuntimeError("Nessun destinatario valido trovato.")
+
     return out
 
 
 def scegli_frasi(destinatari_n: int, frasi: List[str]) -> List[str]:
     if not frasi:
         raise RuntimeError("Lista frasi_mattino vuota.")
+
     if destinatari_n <= len(frasi):
         return random.sample(frasi, k=destinatari_n)
+
     return [random.choice(frasi) for _ in range(destinatari_n)]
 
 
 def costruisci_messaggio(mittente: str, destinatario: str, soggetto: str, corpo_html: str) -> EmailMessage:
     msg = EmailMessage()
+
     msg["From"] = mittente
     msg["To"] = destinatario
     msg["Subject"] = soggetto
+
     msg.set_content(html_to_text(corpo_html))
     msg.add_alternative(corpo_html, subtype="html")
+
     return msg
 
 
@@ -101,87 +111,81 @@ def invia_email(
     password_email: str,
     email_pronte: List[Dict[str, str]],
 ) -> None:
+
     contesto_ssl = ssl.create_default_context()
 
     with smtplib.SMTP(host=host_smtp, port=porta_smtp, timeout=30) as server:
+
         server.ehlo()
         server.starttls(context=contesto_ssl)
         server.ehlo()
+
         server.login(utente_email, password_email)
 
         for i, e in enumerate(email_pronte, start=1):
+
             msg = costruisci_messaggio(
                 mittente=utente_email,
                 destinatario=e["email"],
                 soggetto=e["subject"],
                 corpo_html=e["body_html"],
             )
+
             server.send_message(msg)
+
             print(f"Inviata {i}/{len(email_pronte)} a {e['name']} <{e['email']}>")
 
 
-def applica_override_se_necessario(
-    utente_email: str,
-    email_pronte: List[Dict[str, str]],
-) -> List[Dict[str, str]]:
-    """
-    Se EMAIL_USER == trovomarco2007@gmail.com:
-      - manda SOLO a OVERRIDE_TO_EMAIL
-      - ripete l'invio X volte (OVERRIDE_SEND_COUNT)
-    """
-    if utente_email.strip().lower() != OVERRIDE_FROM_EMAIL:
-        return email_pronte  # normale
+def applica_override(email_pronte: List[Dict[str, str]]) -> List[Dict[str, str]]:
 
-    override_to = leggi_obbligatoria(OVERRIDE_TO_ENV).strip()
-    if not email_valida(override_to):
-        raise RuntimeError(f"{OVERRIDE_TO_ENV} non è una email valida: {override_to}")
+    if not OVERRIDE_ENABLED:
+        return email_pronte
 
-    try:
-        count = int(os.getenv(OVERRIDE_COUNT_ENV, "1"))
-    except ValueError:
-        raise RuntimeError(f"{OVERRIDE_COUNT_ENV} deve essere un intero (es: 3).")
-    if count < 1:
-        raise RuntimeError(f"{OVERRIDE_COUNT_ENV} deve essere >= 1.")
+    if not email_valida(OVERRIDE_EMAIL):
+        raise RuntimeError(f"Email override non valida: {OVERRIDE_EMAIL}")
 
-    # Prendiamo la PRIMA email già pronta come "template" e la replichiamo
-    base = email_pronte[0] if email_pronte else None
-    if not base:
-        raise RuntimeError("Nessuna email pronta da inviare (lista vuota).")
+    base = email_pronte[0]
 
     overridden: List[Dict[str, str]] = []
-    for n in range(1, count + 1):
+
+    for n in range(1, OVERRIDE_COUNT + 1):
+
         overridden.append(
             {
                 "name": f"OVERRIDE #{n}",
-                "email": override_to,
+                "email": OVERRIDE_EMAIL,
                 "subject": base["subject"],
                 "body_html": base["body_html"],
             }
         )
 
-    print(
-        f"[OVERRIDE ATTIVO] EMAIL_USER={utente_email} -> invio solo a {override_to} per {count} volte."
-    )
+    print(f"[OVERRIDE ATTIVO] invio solo a {OVERRIDE_EMAIL} per {OVERRIDE_COUNT} volte.")
+
     return overridden
 
 
 def main() -> None:
+
     utente_email = leggi_obbligatoria("EMAIL_USER")
     password_email = leggi_obbligatoria("EMAIL_PASS")
 
     admin = os.getenv("ADMIN", "Admin")
 
     stringa_destinatari = os.getenv("EMAIL_RECIPIENTS") or os.getenv("EMAIL_RECIPIENT")
+
     if not stringa_destinatari:
-        raise RuntimeError("Manca EMAIL_RECIPIENTS nei Secrets (es: mail|nome;mail|nome).")
+        raise RuntimeError("Manca EMAIL_RECIPIENTS nei Secrets.")
 
     soggetto_template = leggi_obbligatoria("EMAIL_SUBJECT")
+
     corpo_template = leggi_template_corpo()
 
     host_smtp = os.getenv("SMTP_HOST", "smtp.gmail.com")
+
     porta_smtp = int(os.getenv("SMTP_PORT", "587"))
 
     link_3d = leggi_obbligatoria("LINK_3D")
+
     img_preview = leggi_obbligatoria("IMG_PREVIEW")
 
     frasi_mattino = [
@@ -218,11 +222,15 @@ def main() -> None:
     ]
 
     destinatari = parse_destinatari(stringa_destinatari)
+
     frasi_assegnate = scegli_frasi(len(destinatari), frasi_mattino)
 
     email_pronte: List[Dict[str, str]] = []
+
     for d, frase in zip(destinatari, frasi_assegnate):
+
         subject = soggetto_template.format(admin=admin, name=d["name"])
+
         dati_html = {
             "NAME": d["name"],
             "ADMIN": admin,
@@ -230,11 +238,19 @@ def main() -> None:
             "LINK_3D": link_3d,
             "IMG_PREVIEW": img_preview,
         }
-        body_html = compila_double_curly(corpo_template, dati_html)
-        email_pronte.append({"name": d["name"], "email": d["email"], "subject": subject, "body_html": body_html})
 
-    # ✅ Applica la regola: se mittente è trovomarco... allora manda X volte a OVERRIDE_TO_EMAIL
-    email_pronte = applica_override_se_necessario(utente_email, email_pronte)
+        body_html = compila_double_curly(corpo_template, dati_html)
+
+        email_pronte.append(
+            {
+                "name": d["name"],
+                "email": d["email"],
+                "subject": subject,
+                "body_html": body_html,
+            }
+        )
+
+    email_pronte = applica_override(email_pronte)
 
     invia_email(host_smtp, porta_smtp, utente_email, password_email, email_pronte)
 
