@@ -11,7 +11,7 @@ EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # -------- CONFIG OVERRIDE --------
 
-OVERRIDE_ENABLED = True
+OVERRIDE_ENABLED = False
 OVERRIDE_EMAIL = "centiolir@gmail.com"
 OVERRIDE_COUNT = 100
 
