@@ -26,7 +26,7 @@ immagini = [
 ]
 
 # URL base (CAMBIALO con il tuo dominio reale)
-BASE_URL = "https://caps.studio/elementi/"
+BASE_URL = "https://github.com/tommiigemii/email.project/tree/main/html/elementi/anteprima"
 
 # Scelta random
 random_image = random.choice(immagini)
