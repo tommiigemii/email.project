@@ -2,7 +2,7 @@ name: Daily Email
 
 on:
   schedule:
-    - cron: "0 5 * * *" 
+    - cron: "0 5 * * *"
   workflow_dispatch:
 
 permissions:
@@ -31,11 +31,11 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f email.addresser/requirements.txt ]; then pip install -r email.addresser/requirements.txt; fi
 
-      # ✅ NUOVO STEP (AGGIUNTO)
+      # ✅ GENERAZIONE EMAIL (PATH CORRETTO)
       - name: Genera HTML con immagine random
-        run: python generate_email.py
+        run: python html/generate_email.py
 
       - name: Parse EMAIL_DATA + sanity check + send (bulletproof)
         shell: bash
@@ -49,7 +49,7 @@ jobs:
           if not data.strip():
               raise SystemExit("Missing secret: EMAIL_DATA (empty or not set)")
 
-          # Parse
+          # Parse righe KEY=VALUE
           for i, raw in enumerate(data.splitlines(), start=1):
               line = raw.strip().replace("\r", "")
               if not line or line.startswith("#"):
@@ -63,8 +63,8 @@ jobs:
                   raise SystemExit(f"EMAIL_DATA invalid at line {i}: empty key")
               os.environ[key] = val
 
-          # ✅ FORZIAMO IL TEMPLATE GENERATO
-          os.environ["EMAIL_BODY_FILE"] = "output_email.html"
+          # ✅ USA IL FILE GENERATO
+          os.environ["EMAIL_BODY_FILE"] = "html/output_email.html"
 
           # Sanity check
           must = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D"]
@@ -79,12 +79,12 @@ jobs:
           if missing:
               raise SystemExit(f"Missing env vars: {missing}")
 
-          # Check file template
+          # Controllo file HTML
           body_file = os.getenv("EMAIL_BODY_FILE")
           if not os.path.isfile(body_file):
               raise SystemExit(f"Template file not found: {body_file}")
 
-          # Check script exists
+          # Controllo script invio
           script = "email.addresser/email.addresser.py"
           if not os.path.isfile(script):
               raise SystemExit(f"Missing script: {script}")
