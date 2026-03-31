@@ -2,7 +2,7 @@ name: Daily Email
 
 on:
   schedule:
-    - cron: "5 6 * * *" # ogni minuto
+    - cron: "0 5 * * *" 
   workflow_dispatch:
 
 permissions:
