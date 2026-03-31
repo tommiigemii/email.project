@@ -3,87 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Buongiorno • Start Clean</title>
   <style>
-    /* Reset per Gmail e altri client */
-    img { -ms-interpolation-mode: bicubic; }
-    table { border-collapse: collapse; }
-    .image-container img {
-        width: 100% !important;
-        height: auto !important;
-        max-width: 564px !important; /* 600px meno il padding laterale */
-        display: block;
-        object-fit: cover;
-    }
+    /* Reset per Gmail */
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    table { border-collapse: collapse !important; }
+    body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
   </style>
 </head>
 
 <body bgcolor="#06070c" style="margin:0;padding:0;background-color:#06070c;font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;color: rgba(255,255,255,.92);">
 
-<table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#06070c" style="width:100%;background-color:#06070c;padding:28px 0;">
-  <tr>
-    <td align="center" style="padding:0 14px;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="#06070c">
+<tr>
+<td align="center" style="padding: 20px 10px;">
 
-      <table width="600" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#0b0f1a" style="width:600px;max-width:600px;background-color:#0b0f1a;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow: 0 18px 60px rgba(0,0,0,.60);">
+  <table width="600" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="#0b0f1a" style="width:600px; max-width:600px; background-color:#0b0f1a; border-radius:24px; overflow:hidden; border:1px solid rgba(255,255,255,.12); box-shadow: 0 20px 50px rgba(0,0,0,.5);">
+    
+    <tr>
+      <td style="padding:0; margin:0;">
+        <div style="height:6px; width:100%; background: linear-gradient(90deg, #ffaa78, #78b4ff, #82ffc8); font-size:1px; line-height:6px;">&nbsp;</div>
+      </td>
+    </tr>
 
-        <tr>
-          <td height="6" style="background: linear-gradient(90deg, rgba(255,170,120,.55), rgba(120,180,255,.45), rgba(130,255,200,.40)); line-height:6px; font-size:1px;">&nbsp;</td>
-        </tr>
+    <tr>
+      <td style="padding:32px 24px 20px 24px;">
+        <h1 style="margin:0; font-size:28px; font-weight:800; letter-spacing:-0.5px; color:#ffffff;">Buongiorno {{NAME}} ☀️</h1>
+        <p style="margin:8px 0 0 0; font-size:14px; color: rgba(255,255,255,.60); line-height:1.4;">
+          Calm outside, focus inside. Oggi si parte puliti.
+        </p>
+      </td>
+    </tr>
 
-        <tr>
-          <td style="padding:24px 24px 18px 24px;">
-            <h1 style="margin:0;font-size:30px;font-weight:800;letter-spacing:-0.5px;">Buongiorno {{NAME}} ☀️</h1>
-            <p style="margin:10px 0 0 0;font-size:14px;line-height:1.5;color: rgba(255,255,255,.70);">
-              Calm outside, focus inside. Oggi si parte puliti e si resta lucidi.
-            </p>
-          </td>
-        </tr>
+    <tr>
+      <td style="padding:0 24px 24px 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background-color: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 16px;">
+          <tr>
+            <td style="padding: 20px; font-size: 16px; line-height: 1.6; color: #ffffff; font-style: italic; text-align: center;">
+              “{{FRASE_MATTINO}}”
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
 
-        <tr>
-          <td style="padding:0 24px;">
-            <div style="height:1px;background-color: rgba(255,255,255,.10);"></div>
-          </td>
-        </tr>
+    <tr>
+      <td align="center" style="padding:0 24px 24px 24px;">
+        <img src="{{RANDOM_IMAGE_URL}}" alt="Immagine del giorno" width="550" 
+             style="display:block; width:100%; max-width:550px; height:auto; border-radius:16px; border:1px solid rgba(255,255,255,.12); background-color: #1a1f2e;">
+      </td>
+    </tr>
 
-        <tr>
-          <td style="padding:20px 24px;">
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-              <tr>
-                <td style="border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.04);border-radius:16px;padding:18px;font-size:15px;line-height:1.6;font-style:italic;">
-                  "{{FRASE_MATTINO}}"
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+    <tr>
+      <td align="center" style="padding:0 24px 32px 24px;">
+        <a href="{{LINK_3D}}" target="_blank"
+           style="display:inline-block; padding:14px 28px; border-radius:12px; background-color: #ffffff; color:#06070c; text-decoration:none; font-size:14px; font-weight:800;">
+          Apri modello 3D →
+        </a>
+      </td>
+    </tr>
 
-        <tr>
-          <td align="center" style="padding:0 24px 20px 24px;" class="image-container">
-            <img src="{{RANDOM_IMAGE_URL}}" alt="Focus del giorno" width="552" 
-                 style="display:block; width:100%; max-width:100%; height:auto; border-radius:14px; border:1px solid rgba(255,255,255,.1); background-color: #161b22; text-decoration:none; outline:none;">
-          </td>
-        </tr>
+    <tr>
+      <td style="background-color: rgba(0,0,0,.2); padding:16px; text-align:center; font-size:12px; color: rgba(255,255,255,.4);">
+        Paolo (il gatto) dice: <span style="color:rgba(255,255,255,.7);">“oggi si fa easy ma fatto bene”</span> 😼
+      </td>
+    </tr>
 
-        <tr>
-          <td align="center" style="padding:0 24px 24px 24px;">
-            <a href="{{LINK_3D}}" target="_blank"
-               style="display:inline-block;padding:14px 24px;border-radius:14px;border:1px solid rgba(255,255,255,.2);background: #ffffff;color:#06070c;text-decoration:none;font-size:14px;font-weight:800; letter-spacing:0.5px;">
-              Apri modello 3D →
-            </a>
-          </td>
-        </tr>
+  </table>
 
-        <tr>
-          <td style="background-color: rgba(255,255,255,.03);padding:16px;text-align:center;font-size:12px;color: rgba(255,255,255,.50);border-top:1px solid rgba(255,255,255,.05);">
-            Paolo (il gatto) dice: <span style="color:rgba(255,255,255,.8);">“oggi si fa easy ma fatto bene”</span> 😼
-          </td>
-        </tr>
-
-      </table>
-
-    </td>
-  </tr>
+</td>
+</tr>
 </table>
 
 </body>
