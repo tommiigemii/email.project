@@ -33,6 +33,10 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      # ✅ NUOVO STEP (AGGIUNTO)
+      - name: Genera HTML con immagine random
+        run: python generate_email.py
+
       - name: Parse EMAIL_DATA + sanity check + send (bulletproof)
         shell: bash
         env:
@@ -45,7 +49,7 @@ jobs:
           if not data.strip():
               raise SystemExit("Missing secret: EMAIL_DATA (empty or not set)")
 
-          # Parse: solo righe KEY=VALUE, ignora vuote/commenti
+          # Parse
           for i, raw in enumerate(data.splitlines(), start=1):
               line = raw.strip().replace("\r", "")
               if not line or line.startswith("#"):
@@ -59,32 +63,25 @@ jobs:
                   raise SystemExit(f"EMAIL_DATA invalid at line {i}: empty key")
               os.environ[key] = val
 
+          # ✅ FORZIAMO IL TEMPLATE GENERATO
+          os.environ["EMAIL_BODY_FILE"] = "output_email.html"
+
           # Sanity check
-          must = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D", "IMG_PREVIEW"]
+          must = ["EMAIL_USER", "EMAIL_PASS", "EMAIL_SUBJECT", "LINK_3D"]
           missing = [k for k in must if not os.getenv(k)]
 
           if not (os.getenv("EMAIL_RECIPIENT") or os.getenv("EMAIL_RECIPIENTS")):
               missing.append("EMAIL_RECIPIENTS (or EMAIL_RECIPIENT)")
 
-          if not (os.getenv("EMAIL_BODY_FILE") or os.getenv("EMAIL_BODY")):
-              missing.append("EMAIL_BODY_FILE (or EMAIL_BODY)")
+          if not os.getenv("EMAIL_BODY_FILE"):
+              missing.append("EMAIL_BODY_FILE")
 
           if missing:
               raise SystemExit(f"Missing env vars: {missing}")
 
-          # IMG_PREVIEW deve essere un URL pubblico
-          img = os.getenv("IMG_PREVIEW", "")
-          if not (img.startswith("https://") or img.startswith("cid:")):
-              raise SystemExit("IMG_PREVIEW must be an https:// URL (GitHub Pages) or cid:... (inline).")
-
-          # Il tuo script usa .format(admin=...), quindi nel subject usa {admin} se metti placeholder
-          subj = os.getenv("EMAIL_SUBJECT", "")
-          if "{ADMIN}" in subj:
-              raise SystemExit("EMAIL_SUBJECT contains {ADMIN}. Use {admin} (lowercase).")
-
-          # Check template file (se usi EMAIL_BODY_FILE)
-          body_file = os.getenv("EMAIL_BODY_FILE", "").strip()
-          if body_file and not os.path.isfile(body_file):
+          # Check file template
+          body_file = os.getenv("EMAIL_BODY_FILE")
+          if not os.path.isfile(body_file):
               raise SystemExit(f"Template file not found: {body_file}")
 
           # Check script exists
@@ -92,6 +89,6 @@ jobs:
           if not os.path.isfile(script):
               raise SystemExit(f"Missing script: {script}")
 
-          print("OK: env parsed + checks passed. Sending...")
+          print("OK: env parsed + HTML generato. Sending...")
           subprocess.run([sys.executable, script], check=True, env=os.environ)
           PY
