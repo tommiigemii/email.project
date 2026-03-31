@@ -191,28 +191,54 @@
               </td>
             </tr>
 
-            <!-- IMAGE PREVIEW -->
-            <tr>
-              <td align="center" style="padding:10px 18px 14px;">
-                <a href="{{LINK_3D}}" target="_blank" style="text-decoration:none;">
-                  <img
-                    src="{{IMG_PREVIEW}}"
-                    alt="Apri il modello 3D"
-                    width="100%"
-                    style="
-                      max-width:564px;
-                      display:block;
-                      border-radius:20px;
-                      border:1px solid rgba(255,255,255,.12);
-                      box-shadow:
-                        0 18px 60px rgba(0,0,0,.55),
-                        0 0 22px rgba(120,180,255,.12),
-                        0 0 22px rgba(255,170,120,.10);
-                    "
-                  />
-                </a>
-              </td>
-            </tr>
+            <div id="random-image-container" style="text-align: center;">
+    <img id="myRandomImage" src="" alt="Immagine Casuale" style="max-width: 100%; height: auto; border-radius: 8px;">
+</div>
+
+<script>
+    (function() {
+        // Lista aggiornata basata sui tuoi file reali
+        const immagini = [
+            "00D69833-C09F-4DE3-ADC4-3A4F8B0C704E_236487F7-1C83-48CC-A8FC-098C2030B886.jpeg",
+            "504b11f5-ba4d-46a7-81f5-3a9b6804aae3.jpeg",
+            "832D51EE-01DA-45FF-921F-30D912D01F64_BCAE311A-3744-465B-AE92-BD37A0DCA339.jpeg",
+            "B7888349-454A-4D30-A29A-16602651CF9B.jpeg",
+            "IMG_2426.jpeg",
+            "IMG_2457.jpeg",
+            "IMG_2610.png",
+            "IMG_2884.jpeg",
+            "IMG_2966.jpeg",
+            "IMG_2982.png",
+            "IMG_3059.jpeg",
+            "IMG_3157.jpeg",
+            "IMG_3248.jpeg",
+            "IMG_3357.jpeg",
+            "IMG_3370.jpeg",
+            "IMG_3394.jpeg",
+            "IMG_3666.jpeg",
+            "image.jpeg",
+            "photo-2299_singular_display_fullPicture.jpeg",
+            "photo-2914_singular_display_fullPicture.jpeg",
+            "photo-3355_singular_display_fullPicture.jpeg"
+        ];
+
+        // Funzione per scegliere e mostrare l'immagine
+        function caricaImmagineRandom() {
+            const percorsoCartella = "elementi/";
+            const randomIndex = Math.floor(Math.random() * immagini.length);
+            const nomeFile = immagini[randomIndex];
+            
+            const imgElement = document.getElementById('myRandomImage');
+            imgElement.src = percorsoCartella + nomeFile;
+            
+            // Log per debug (puoi rimuoverlo se tutto funziona)
+            console.log("Immagine caricata: " + percorsoCartella + nomeFile);
+        }
+
+        // Avvia la funzione al caricamento
+        window.addEventListener('DOMContentLoaded', caricaImmagineRandom);
+    })();
+</script>
 
             <!-- CTA -->
             <tr>
